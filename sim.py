@@ -19,12 +19,15 @@ import sys
 # user interface
 
 scenario_id = sys.argv[1]
-
 scenario = importlib.import_module(f'scenarios.{scenario_id}')
-
 print(f"Scenario: {scenario.scenario_name}")
 route = scenario.route
 stops = scenario.stops
+
+vehicle_id = sys.argv[2]
+vehicle = importlib.import_module(f'vehicles.{vehicle_id}')
+print(f"Vehicle: {vehicle.name}")
+
 
 # ---- 1) Define the integral-based accel/decel functions ----
 
@@ -69,23 +72,27 @@ def make_decdist_fn(k, a, b, c, m0):
 
 # ---- 2) Set train & track parameters ----
 
-power_weight_ratio      = 26.74          # kW per tonne → power/weight ratio
-a_coef = 0.0059         # Davis resistance a
-b_coef = 0.000118       # Davis resistance b
-c_coef = 0.000018       # Davis resistance c
-initial_accel     = 0.9            # initial max accel (m/s²)
-mile2m = 1609.34
+vehicle.power_weight_ratio      = 26.74          # kW per tonne → power/weight ratio
+vehicle.a_coef = 0.0059         # Davis resistance a
+vehicle.b_coef = 0.000118       # Davis resistance b
+vehicle.c_coef = 0.000018       # Davis resistance c
+vehicle.initial_accel     = 0.9            # initial max accel (m/s²)
 
 # Create the advance functions:
-t_acc = make_acctime_fn(power_weight_ratio, a_coef, b_coef, c_coef, initial_accel)
-d_acc = make_accdist_fn(power_weight_ratio, a_coef, b_coef, c_coef, initial_accel)
-t_dec = make_dectime_fn(power_weight_ratio, a_coef, b_coef, c_coef, initial_accel)
-d_dec = make_decdist_fn(power_weight_ratio, a_coef, b_coef, c_coef, initial_accel)
+t_acc = make_acctime_fn(vehicle.power_weight_ratio, vehicle.a_coef, vehicle.b_coef, vehicle.c_coef, vehicle.initial_accel)
+d_acc = make_accdist_fn(vehicle.power_weight_ratio, vehicle.a_coef, vehicle.b_coef, vehicle.c_coef, vehicle.initial_accel)
+t_dec = make_dectime_fn(vehicle.power_weight_ratio, vehicle.a_coef, vehicle.b_coef, vehicle.c_coef, vehicle.initial_accel)
+d_dec = make_decdist_fn(vehicle.power_weight_ratio, vehicle.a_coef, vehicle.b_coef, vehicle.c_coef, vehicle.initial_accel)
 
 # Helper to convert speeds:
 kmh2ms = lambda v: v * 1000/3600
 ms2kmh = lambda v: v * 3600/1000
+mile2m = 1609.34
 
+vehicle_max_speed_ms = kmh2ms(vehicle.max_speed)
+
+def limited_kmh2ms(v):
+    return min(kmh2ms(v), vehicle_max_speed_ms)
 
 # ---- 3) Build the station timetable ----
 
@@ -120,10 +127,10 @@ def solve_peak(v0, v1, v2, length):
 for start, end, spd, stop in route:
     segment_start_pos = pos_cum
     segment_length = (end - start) * mile2m
-    v_lim   = kmh2ms(spd)
+    v_lim   = limited_kmh2ms(spd)
     cruising = True
     # determine next speed for decel
-    v_next = 0.0 if stop else kmh2ms(route[route.index((start,end,spd,stop))+1][2])
+    v_next = 0.0 if stop else limited_kmh2ms(route[route.index((start,end,spd,stop))+1][2])
 
     # check reachability
     if d_acc(v_prev, v_lim) + d_dec(v_lim, v_next) > segment_length:
