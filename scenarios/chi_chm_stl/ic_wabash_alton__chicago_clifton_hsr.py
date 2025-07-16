@@ -50,9 +50,11 @@ route = [
     (alton(187.4), alton(256.8), 177, False),
                                 # skip ALTON station
                                 # Joliet to Alton station has already been upgraded to 177 km/h
-    (alton(256.8), alton(259.6), 100, False),
-    (alton_orig(262.1), alton_orig(281.0), 100, False),
-    (trra(3.3), trra(0.0), 100, True),
+    (256.8, 259.6, 145, False),
+    (alton_orig(262.1), alton_orig(270.0), 145, False),
+    (alton_orig(270.0), alton_orig(274.4), 145, False),
+    (alton_orig(274.4), trra(1.5), 40, True),
+                                # ST. LOUIS stop
 ]
 
 stops = {
@@ -61,5 +63,5 @@ stops = {
     127.8: 'Champaign',
     wabash(376): 'Decatur',
     wabash(414.3): 'Springfield',
-    trra(0.0): 'St. Louis',
+    trra(2.5): 'St. Louis',
 }
