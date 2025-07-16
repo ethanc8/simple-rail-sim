@@ -13,6 +13,18 @@ Requirements:
 
 import numpy as np
 import pandas as pd
+import importlib
+import sys
+
+# user interface
+
+scenario_id = sys.argv[1]
+
+scenario = importlib.import_module(f'scenarios.{scenario_id}')
+
+print(f"Scenario: {scenario.scenario_name}")
+route = scenario.route
+stops = scenario.stops
 
 # ---- 1) Define the integral-based accel/decel functions ----
 
@@ -70,37 +82,12 @@ d_acc = make_accdist_fn(power_weight_ratio, a_coef, b_coef, c_coef, initial_acce
 t_dec = make_dectime_fn(power_weight_ratio, a_coef, b_coef, c_coef, initial_accel)
 d_dec = make_decdist_fn(power_weight_ratio, a_coef, b_coef, c_coef, initial_accel)
 
-
-# ---- 3) Define the route segments ----
-
-# Each tuple: (start milepost, end milepost, speed limit (km/h), ends at stop, name)
-route = [
-    (  0.0,   3.0, 100, False),
-    (  3.0,   4.2, 150, False),
-    (  4.2,   7.0, 250, False),
-    (  7.0,  16.5, 300, False),
-    ( 16.5,  17.0, 250, False),
-    ( 17.0,  47.9, 300, False),
-    ( 47.9,  48.4, 280, False),
-    ( 48.4,  53.7, 300, False),
-    ( 53.7,  55.9, 150, True ),  # Kankakee stop
-    ( 55.9,  57.0, 150, False),
-    ( 57.0,  64.0, 300, False),
-    ( 64.0, 127.8, 177, True ),  # Champaign stop
-]
-
-stops = {
-    0.0: 'Chicago Union Station',
-    55.9: 'Kankakee',
-    127.8: 'Champaign'
-}
-
 # Helper to convert speeds:
 kmh2ms = lambda v: v * 1000/3600
 ms2kmh = lambda v: v * 3600/1000
 
 
-# ---- 4) Build the station timetable ----
+# ---- 3) Build the station timetable ----
 
 def timestamp_to_str(timestamp):
     hh, rem = divmod(timestamp, 3600)
@@ -113,7 +100,7 @@ t_cum = 0.0  # seconds since departure
 v_prev = 0.0 # m/s
 pos_cum = 0.0 # m
 
-# Departure from Chicago
+# Departure
 timetable.append({
     'Station': stops[0.0],
     'MP': 0.0,
@@ -121,23 +108,43 @@ timetable.append({
     'Departure': '00:00:00'
 })
 
+def solve_peak(v0, v1, v2, length):
+    """Find peak speed v_peak <= v1 if no cruise possible."""
+    lo, hi = v0, v1
+    for _ in range(30):
+        mid = 0.5*(lo+hi)
+        if d_acc(v0,mid)+d_dec(mid,v2) > length: hi = mid
+        else: lo = mid
+    return lo
+
 for start, end, spd, stop in route:
     segment_start_pos = pos_cum
     segment_length = (end - start) * mile2m
     v_lim   = kmh2ms(spd)
+    cruising = True
     # determine next speed for decel
     v_next = 0.0 if stop else kmh2ms(route[route.index((start,end,spd,stop))+1][2])
 
+    # check reachability
+    if d_acc(v_prev, v_lim) + d_dec(v_lim, v_next) > segment_length:
+        # adjust peak
+        v_max = solve_peak(v_prev, v_lim, v_next, segment_length)
+        cruising = False
+    else:
+        v_max = v_lim
+
     # 1) Acceleration block
-    if v_prev < v_lim:
-        t1 = t_acc(v_prev, v_lim)
-        d1 = d_acc(v_prev, v_lim)
+    if v_prev < v_max:
+        t1 = t_acc(v_prev, v_max)
+        d1 = d_acc(v_prev, v_max)
         actions.append({
             'Phase': 'Accelerate',
             'Start Pos (m)': segment_start_pos,
             'End Pos (m)'  : segment_start_pos + d1,
+            'Start Pos (mi)': segment_start_pos / mile2m,
+            'End Pos (mi)'  : (segment_start_pos + d1) / mile2m,
             'Start Speed (km/h)': ms2kmh(v_prev),
-            'End Speed (km/h)': ms2kmh(v_lim),
+            'End Speed (km/h)': ms2kmh(v_max),
             'Start Time': timestamp_to_str(t_cum),
             'End Time': timestamp_to_str(t_cum + t1)
         })
@@ -145,31 +152,36 @@ for start, end, spd, stop in route:
         pos_cum += d1
 
     # 2) Cruise block
-    d3 = d_dec(v_lim, v_next)
+    d3 = d_dec(v_max, v_next)
     d2 = segment_length - (pos_cum - segment_start_pos) - d3
     if d2 > 0:
-        t2 = d2 / v_lim
-        actions.append({
-            'Phase': 'Cruise',
-            'Start Pos (m)': pos_cum,
-            'End Pos (m)'  : pos_cum + d2,
-            'Start Speed (km/h)': ms2kmh(v_lim),
-            'End Speed (km/h)': ms2kmh(v_lim),
-            'Start Time': timestamp_to_str(t_cum),
-            'End Time': timestamp_to_str(t_cum + t2)
-        })
+        t2 = d2 / v_max
+        if cruising:
+            actions.append({
+                'Phase': 'Cruise',
+                'Start Pos (m)': pos_cum,
+                'End Pos (m)'  : pos_cum + d2,
+                'Start Pos (mi)': pos_cum / mile2m,
+                'End Pos (mi)'  : (pos_cum + d2) / mile2m,
+                'Start Speed (km/h)': ms2kmh(v_max),
+                'End Speed (km/h)': ms2kmh(v_max),
+                'Start Time': timestamp_to_str(t_cum),
+                'End Time': timestamp_to_str(t_cum + t2)
+            })
         t_cum += t2
         pos_cum += d2
 
     # 3) Deceleration block
-    if v_next < v_lim:
-        t3 = t_dec(v_lim, v_next)
-        d3 = d_dec(v_lim, v_next)
+    if v_next < v_max:
+        t3 = t_dec(v_max, v_next)
+        d3 = d_dec(v_max, v_next)
         actions.append({
             'Phase': 'Decelerate',
             'Start Pos (m)': pos_cum,
             'End Pos (m)'  : pos_cum + d3,
-            'Start Speed (km/h)': ms2kmh(v_lim),
+            'Start Pos (mi)': pos_cum / mile2m,
+            'End Pos (mi)'  : (pos_cum + d3) / mile2m,
+            'Start Speed (km/h)': ms2kmh(v_max),
             'End Speed (km/h)': ms2kmh(v_next),
             'Start Time': timestamp_to_str(t_cum),
             'End Time': timestamp_to_str(t_cum + t3)
@@ -183,6 +195,8 @@ for start, end, spd, stop in route:
             'Phase': 'Dwell',
             'Start Pos (m)': pos_cum,
             'End Pos (m)'  : pos_cum,
+            'Start Pos (mi)': pos_cum / mile2m,
+            'End Pos (mi)'  : pos_cum / mile2m,
             'Start Speed (km/h)': 0.0,
             'End Speed (km/h)': 0.0,
             'Start Time': timestamp_to_str(t_cum),
@@ -200,7 +214,7 @@ for start, end, spd, stop in route:
 
         v_prev = 0.0
     else:
-        v_prev = v_lim
+        v_prev = v_max
 
 timetable_df = pd.DataFrame(timetable)
 print("\n=== Timetable ===")
@@ -208,4 +222,4 @@ print(timetable_df.to_string(index=False))
 
 actions_df = pd.DataFrame(actions)
 print("\n=== Action Breakdown ===")
-print(actions_df[['Phase','Start Pos (m)','End Pos (m)','Start Speed (km/h)', 'End Speed (km/h)', 'Start Time','End Time']].to_string(index=False))
+print(actions_df[['Phase','Start Pos (m)','End Pos (m)','Start Pos (mi)','End Pos (mi)','Start Speed (km/h)', 'End Speed (km/h)', 'Start Time','End Time']].to_string(index=False))
