@@ -72,12 +72,6 @@ def make_decdist_fn(k, a, b, c, m0):
 
 # ---- 2) Set train & track parameters ----
 
-vehicle.power_weight_ratio      = 26.74          # kW per tonne → power/weight ratio
-vehicle.a_coef = 0.0059         # Davis resistance a
-vehicle.b_coef = 0.000118       # Davis resistance b
-vehicle.c_coef = 0.000018       # Davis resistance c
-vehicle.initial_accel     = 0.9            # initial max accel (m/s²)
-
 # Create the advance functions:
 t_acc = make_acctime_fn(vehicle.power_weight_ratio, vehicle.a_coef, vehicle.b_coef, vehicle.c_coef, vehicle.initial_accel)
 d_acc = make_accdist_fn(vehicle.power_weight_ratio, vehicle.a_coef, vehicle.b_coef, vehicle.c_coef, vehicle.initial_accel)
@@ -223,10 +217,10 @@ for start, end, spd, stop in route:
     else:
         v_prev = v_max
 
-timetable_df = pd.DataFrame(timetable)
-print("\n=== Timetable ===")
-print(timetable_df.to_string(index=False))
-
 actions_df = pd.DataFrame(actions)
 print("\n=== Action Breakdown ===")
 print(actions_df[['Phase','Start Pos (m)','End Pos (m)','Start Pos (mi)','End Pos (mi)','Start Speed (km/h)', 'End Speed (km/h)', 'Start Time','End Time']].to_string(index=False))
+
+timetable_df = pd.DataFrame(timetable)
+print("\n=== Timetable ===")
+print(timetable_df.to_string(index=False))
