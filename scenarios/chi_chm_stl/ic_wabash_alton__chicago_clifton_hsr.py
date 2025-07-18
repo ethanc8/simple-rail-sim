@@ -63,5 +63,5 @@ stops = {
     127.8: 'Champaign',
     wabash(376): 'Decatur',
     wabash(414.3): 'Springfield',
-    trra(2.5): 'St. Louis',
+    trra(1.5): 'St. Louis',
 }
