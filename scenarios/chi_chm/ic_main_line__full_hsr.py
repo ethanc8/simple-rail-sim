@@ -23,3 +23,5 @@ stops = {
     55.9: 'Kankakee',
     127.8: 'Champaign'
 }
+
+dwell_time = 60 # seconds

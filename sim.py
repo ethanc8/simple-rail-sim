@@ -201,17 +201,17 @@ for start, end, spd, stop in route:
             'Start Speed (km/h)': 0.0,
             'End Speed (km/h)': 0.0,
             'Start Time': timestamp_to_str(t_cum),
-            'End Time': timestamp_to_str(t_cum + 60.0)
+            'End Time': timestamp_to_str(t_cum + scenario.dwell_time)
         })
 
         timetable.append({
             'Station': stops[end],
             'MP'     : end,
             'Arrival': timestamp_to_str(t_cum),
-            'Departure': timestamp_to_str(t_cum + 60.0)
+            'Departure': timestamp_to_str(t_cum + scenario.dwell_time)
         })
 
-        t_cum += 60.0
+        t_cum += scenario.dwell_time
 
         v_prev = 0.0
     else:

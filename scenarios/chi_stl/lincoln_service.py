@@ -85,3 +85,5 @@ stops = {
     256.8: 'Alton',
     trra(1.5): 'St. Louis',
 }
+
+dwell_time = 60 # seconds

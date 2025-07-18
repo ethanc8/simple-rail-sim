@@ -71,3 +71,5 @@ stops = {
     brooklyn(468.0): 'Edwardsville',
     trra(0.0): 'St. Louis'
 }
+
+dwell_time = 60 # seconds
