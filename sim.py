@@ -99,7 +99,8 @@ def timestamp_to_str(timestamp):
 
 timetable = []
 actions = []
-t_cum = 0.0  # seconds since departure
+depart_time = 0.0
+t_cum = depart_time # seconds since departure
 v_prev = 0.0 # m/s
 pos_cum = 0.0 # m
 
@@ -108,7 +109,7 @@ timetable.append({
     'Station': stops[0.0],
     'MP': 0.0,
     'Arrival': None,
-    'Departure': '00:00:00'
+    'Departure': timestamp_to_str(depart_time)
 })
 
 def solve_peak(v0, v1, v2, length):
