@@ -16,6 +16,8 @@ import pandas as pd
 import importlib
 import sys
 
+import matplotlib.pyplot as plt
+
 # user interface
 
 scenario_id = sys.argv[1]
@@ -147,7 +149,9 @@ for start, end, spd, stop in route:
             'Start Speed (km/h)': ms2kmh(v_prev),
             'End Speed (km/h)': ms2kmh(v_max),
             'Start Time': timestamp_to_str(t_cum),
-            'End Time': timestamp_to_str(t_cum + t1)
+            'End Time': timestamp_to_str(t_cum + t1),
+            'Start Time (s)': (t_cum),
+            'End Time (s)': (t_cum + t1)
         })
         t_cum += t1
         pos_cum += d1
@@ -167,7 +171,9 @@ for start, end, spd, stop in route:
                 'Start Speed (km/h)': ms2kmh(v_max),
                 'End Speed (km/h)': ms2kmh(v_max),
                 'Start Time': timestamp_to_str(t_cum),
-                'End Time': timestamp_to_str(t_cum + t2)
+            'End Time': timestamp_to_str(t_cum + t2),
+            'Start Time (s)': (t_cum),
+            'End Time (s)': (t_cum + t2)
             })
         t_cum += t2
         pos_cum += d2
@@ -185,7 +191,9 @@ for start, end, spd, stop in route:
             'Start Speed (km/h)': ms2kmh(v_max),
             'End Speed (km/h)': ms2kmh(v_next),
             'Start Time': timestamp_to_str(t_cum),
-            'End Time': timestamp_to_str(t_cum + t3)
+            'End Time': timestamp_to_str(t_cum + t3),
+            'Start Time (s)': (t_cum),
+            'End Time (s)': (t_cum + t3)
         })
         t_cum += t3
         pos_cum += d3
@@ -201,7 +209,9 @@ for start, end, spd, stop in route:
             'Start Speed (km/h)': 0.0,
             'End Speed (km/h)': 0.0,
             'Start Time': timestamp_to_str(t_cum),
-            'End Time': timestamp_to_str(t_cum + scenario.dwell_time)
+            'End Time': timestamp_to_str(t_cum + scenario.dwell_time),
+            'Start Time (s)': (t_cum),
+            'End Time (s)': (t_cum + scenario.dwell_time)
         })
 
         timetable.append({
@@ -224,3 +234,59 @@ print(actions_df[['Phase','Start Pos (m)','End Pos (m)','Start Pos (mi)','End Po
 timetable_df = pd.DataFrame(timetable)
 print("\n=== Timetable ===")
 print(timetable_df.to_string(index=False))
+
+def plot_stringline(actions_df, timetable_df, color='tab:blue', linewidth=1):
+    """
+    Draws a stringline diagram (position vs time) with:
+      - one uniform color
+      - accel/decel as smooth quadratic curves
+      - cruise/dwell as straight lines
+    and saves it to out/stringline.png.
+    """
+    # map station names → vertical positions (m)
+    mile2m = 1609.34
+    station_positions = {
+        row['Station']: row['MP'] * mile2m
+        for _, row in timetable_df.iterrows() if row['MP'] is not None
+    }
+    
+    fig, ax = plt.subplots(figsize=(10,6))
+    
+    for _, row in actions_df.iterrows():
+        t0, t1 = row['Start Time (s)'], row['End Time (s)']
+        x0, x1 = row['Start Pos (m)'], row['End Pos (m)']
+        phase = row['Phase']
+        
+        if phase in ('Accelerate','Decelerate'):
+            # draw a quadratic curve between endpoints
+            ts = np.linspace(t0, t1, 50)
+            s = (ts - t0) / (t1 - t0)              # normalized [0→1]
+            # ease-in-out: accel → s^2 ; decel → 1 - (1-s)^2
+            if phase == 'Accelerate':
+                weights = s**2
+            else:
+                weights = 1 - (1 - s)**2
+            xs = x0 + weights * (x1 - x0)
+            ax.plot(ts, xs, color=color, linewidth=linewidth)
+        
+        else:
+            # straight line for Cruise or Dwell
+            ax.plot([t0, t1], [x0, x1], color=color, linewidth=linewidth)
+    
+    # annotate stations on the y-axis
+    ax.set_yticks(list(station_positions.values()))
+    ax.set_yticklabels(list(station_positions.keys()))
+    
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: timestamp_to_str(x)))
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Station')
+    ax.set_title('Stringline Diagram')
+    ax.grid(True)
+    plt.tight_layout()
+    
+    outpath = 'out/stringline.png'
+    fig.savefig(outpath)
+    print(f"Stringline diagram saved to {outpath}")
+
+# Call it:
+plot_stringline(actions_df, timetable_df)
