@@ -12,11 +12,11 @@ def mph(speed):
 
 route = [
                                 # OGILVIE stop
-    (  0.0,   0.2, mph(10), False),
-    (  0.2,   0.5, mph(15), False),
-    (  0.5,   2.8, mph(35), True),
+    (  0.0,   0.2, mph(30), False),
+    (  0.2,   0.5, mph(30), False),
+    (  0.5,   2.8, mph(50), True),
                                 # CLYBOURN stop
-    (  2.8,   3.5, mph(35), False),
+    (  2.8,   3.5, mph(50), False),
     (  3.5,   4.0, mph(50), False),
     (  4.0,   6.5, mph(90), True),
                                 # RAVENSWOOD stop
@@ -85,7 +85,7 @@ route = [
     ( 78.2,  81.5, mph(90), True),
                                 # LINCOLN AVE stop
     ( 81.5,  83.0, mph(90), False),
-    ( 83.0,  84.2, mph(15), True),
+    ( 83.0,  84.2, mph(30), True),
                                 # MILWAUKEE INTERMODAL stop
 
 ]
