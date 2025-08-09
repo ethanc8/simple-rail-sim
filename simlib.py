@@ -288,6 +288,7 @@ def plot_stringline_multi(
     scenarios,                      # list of (actions_df, timetable_df, label, color)
     minutes=True,                    # x-axis in minutes
     linewidth=1,
+    name='Stringline Diagram'
 ):
     """
     Plot multiple scenarios on a single stringline (time-distance) diagram.
@@ -349,7 +350,7 @@ def plot_stringline_multi(
         ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: timestamp_to_str_nosec(x)))
 
     ax.set_ylabel('Station')
-    ax.set_title('Stringline Diagram')
+    ax.set_title(name)
     ax.grid(True, which='both', linestyle=':', linewidth=0.7)
     ax.legend(loc='best', frameon=True)
 
