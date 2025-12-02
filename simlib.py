@@ -241,6 +241,8 @@ def plot_stringline(actions_df, timetable_df, color='tab:blue', linewidth=1):
         t0, t1 = row['Start Time (s)'], row['End Time (s)']
         x0, x1 = row['Start Pos (m)'], row['End Pos (m)']
         phase = row['Phase']
+
+        # ax.plot([t0, t1], [x0, x1], color=color, linewidth=linewidth)
         
         if phase in ('Accelerate','Decelerate'):
             # TODO: draw a correct curve rather than quadratic
@@ -317,6 +319,7 @@ def plot_stringline_multi(
             x0, x1 = row['Start Pos (m)'], row['End Pos (m)']
             phase = row['Phase']
 
+            # ax.plot([t0, t1], [x0, x1], color=color, linewidth=linewidth, label=label if first_segment else None)
             if phase in ('Accelerate', 'Decelerate'):
                 # TODO: draw a correct curve rather than quadratic
                 # simple quadratic curve between endpoints
