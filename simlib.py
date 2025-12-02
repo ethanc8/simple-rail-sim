@@ -115,7 +115,7 @@ def simulate(scenario, vehicle, depart_time=0.0):
         v_lim   = limited_speed(spd)
         cruising = True
         # determine next speed for decel
-        v_next = 0.0 if stop else limited_speed(route[route.index((start,end,spd,stop))+1][2])
+        v_next = 0.0 if stop else limited_speed(route[route.index((start,end,spd,stop,dwell_time))+1][2])
 
         # check reachability
         if d_acc(v_prev, v_lim) + d_dec(v_lim, v_next) > segment_length:

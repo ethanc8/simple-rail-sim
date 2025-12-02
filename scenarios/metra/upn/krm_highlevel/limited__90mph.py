@@ -1,3 +1,9 @@
+from units import *
+
+dwell_time = 30 # seconds
+
+timetable_padding = 1.07
+
 scenario_name = "UP-N + KRM, limited-stop, 90 mph"
 
 # convert mph to km/h
@@ -41,11 +47,11 @@ route = [
 ]
 
 stops = {
-    0.0:  'Chicago - Ogilvie',
-    2.8:  'Clybourn',
-    6.5:  'Ravenswood',
-    8.1:  'Peterson/Ridge',
-    9.4:  'Rogers Park',
+    0.0*mi:  'Chicago - Ogilvie',
+    2.8*mi:  'Clybourn',
+    6.5*mi:  'Ravenswood',
+    8.1*mi:  'Peterson/Ridge',
+    9.4*mi:  'Rogers Park',
     11.0*mi: 'Main Street',
     12.0*mi: 'Evanston',
     13.3*mi: 'Central Street',
