@@ -2,6 +2,8 @@ from units import *
 
 dwell_time = 30 # seconds
 
+timetable_padding = 1.07
+
 scenario_name = "Metra Electric - Main Line"
 
 # convert mph to km/h

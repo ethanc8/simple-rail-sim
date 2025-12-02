@@ -95,7 +95,9 @@ def simulate(scenario, vehicle, depart_time=0.0):
         'MP': 0.0,
         'KMP': 0.0,
         'Arrival': None,
-        'Departure': timestamp_to_str(depart_time)
+        'Arrival (s)': None,
+        'Departure': timestamp_to_str(depart_time),
+        'Departure (s)': depart_time,
     })
 
     def solve_peak(v0, v1, v2, length):
@@ -207,7 +209,9 @@ def simulate(scenario, vehicle, depart_time=0.0):
                 'MP'     : end / mi,
                 'KMP'     : end / km,
                 'Arrival': timestamp_to_str(t_cum),
-                'Departure': timestamp_to_str(t_cum + dwell_time)
+                'Arrival (s)': t_cum,
+                'Departure': timestamp_to_str(t_cum + dwell_time),
+                'Departure (s)': t_cum + dwell_time,
             })
 
             t_cum += dwell_time
@@ -224,59 +228,63 @@ def simulate(scenario, vehicle, depart_time=0.0):
     print("\n=== Timetable ===")
     print(timetable_df[['Station', 'MP', 'Arrival', 'Departure']].to_string(index=False))
 
-    return actions_df, timetable_df
+    timetable_pad_df = pad_timetable(timetable_df, scenario.timetable_padding)
+    print("\n=== Timetable (padded) ===")
+    print(timetable_pad_df[['Station', 'MP', 'Arrival', 'Departure']].to_string(index=False))
+
+    return actions_df, timetable_pad_df
+
+def pad_timetable(timetable_df, timetable_padding):
+    prev_raw = 0
+    prev_pad = 0
+    is_first = True
+
+    out = []
+
+    for _, row in timetable_df.iterrows():
+        if is_first:
+            is_first = False
+            prev_raw = row['Departure (s)']
+            prev_pad = row['Departure (s)']
+
+            out.append({
+                'Station': row['Station'],
+                'Position (m)' : row['Position (m)'],
+                'MP'     : row['MP'],
+                'KMP'     : row['KMP'],
+                'Arrival': None,
+                'Arrival (s)': None,
+                'Departure': timestamp_to_str(prev_pad),
+                'Departure (s)': prev_pad,
+            })
+            continue
+
+        arr_raw = row['Arrival (s)']
+        travel_time = arr_raw - prev_raw
+        arr_pad = prev_pad + (travel_time * timetable_padding)
+
+        dep_raw = row['Departure (s)']
+        dwell_time = dep_raw - arr_raw
+        dep_pad = arr_pad + dwell_time
+
+        prev_raw = dep_raw
+        prev_pad = dep_pad
+
+        out.append({
+            'Station': row['Station'],
+            'Position (m)' : row['Position (m)'],
+            'MP'     : row['MP'],
+            'KMP'     : row['KMP'],
+            'Arrival': timestamp_to_str(arr_pad),
+            'Arrival (s)': arr_pad,
+            'Departure': timestamp_to_str(dep_pad),
+            'Departure (s)': dep_pad,
+        })
+    
+    return pd.DataFrame(out)
 
 def plot_stringline(actions_df, timetable_df, color='tab:blue', linewidth=1):
-    """
-    Draws a stringline diagram (position vs time) with:
-      - one uniform color
-      - accel/decel as smooth quadratic curves
-      - cruise/dwell as straight lines
-    """
-    # map station names → vertical positions (m)
-    station_positions = {
-        row['Station']: row['Position (m)']
-        for _, row in timetable_df.iterrows() if row['Position (m)'] is not None
-    }
-    
-    fig, ax = plt.subplots(figsize=(10,6))
-    
-    for _, row in actions_df.iterrows():
-        t0, t1 = row['Start Time (s)'], row['End Time (s)']
-        x0, x1 = row['Start Pos (m)'], row['End Pos (m)']
-        phase = row['Phase']
-
-        # ax.plot([t0, t1], [x0, x1], color=color, linewidth=linewidth)
-        
-        if phase in ('Accelerate','Decelerate'):
-            # TODO: draw a correct curve rather than quadratic
-            # draw a quadratic curve between endpoints
-            ts = np.linspace(t0, t1, 50)
-            s = (ts - t0) / (t1 - t0)              # normalized [0→1]
-            # ease-in-out: accel → s^2 ; decel → 1 - (1-s)^2
-            if phase == 'Accelerate':
-                weights = s**2
-            else:
-                weights = 1 - (1 - s)**2
-            xs = x0 + weights * (x1 - x0)
-            ax.plot(ts, xs, color=color, linewidth=linewidth)
-        
-        else:
-            # straight line for Cruise or Dwell
-            ax.plot([t0, t1], [x0, x1], color=color, linewidth=linewidth)
-    
-    # annotate stations on the y-axis
-    ax.set_yticks(list(station_positions.values()))
-    ax.set_yticklabels(list(station_positions.keys()))
-    
-    ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: timestamp_to_str(x)))
-    ax.set_xlabel('Time')
-    ax.set_ylabel('Station')
-    ax.set_title('Stringline Diagram')
-    ax.grid(True)
-    plt.tight_layout()
-    
-    return fig
+    return plot_stringline_multi([(actions_df, timetable_df, None, color)], linewidth=linewidth)
 
 def _hhmmss_to_sec(s):
     h, m, sec = map(int, str(s).split(':'))
@@ -290,14 +298,89 @@ def _get_numeric(row, key_num, key_str, is_time=False):
         return float(_hhmmss_to_sec(row[key_str])) if is_time else float(row[key_str])
     raise KeyError(f"Neither '{key_num}' nor '{key_str}' found/usable in row.")
 
-def plot_stringline_multi(
+def plot_stringline_multi(*args, **kwargs):
+    return plot_stringline_multi_timetable(*args, **kwargs)
+
+def plot_stringline_multi_timetable(
     scenarios,                      # list of (actions_df, timetable_df, label, color)
     minutes=True,                    # x-axis in minutes
     linewidth=1,
     name='Stringline Diagram'
 ):
     """
-    Plot multiple scenarios on a single stringline (time-distance) diagram.
+    Plot multiple scenarios on a single stringline (time-distance) diagram. This version supports timetable padding.
+
+    Each timetable_df should have 'Station' and 'Position (m)' (milepost) rows for y-axis labels.
+    """
+
+    # Collect station y-axis ticks from all scenarios (union of stations)
+    station_pos = {}
+    for _actions_df, ttab, _label, _color in scenarios:
+        for _, r in ttab.iterrows():
+            if 'Position (m)' in r and r['Position (m)'] is not None and r['Position (m)'] == r['Position (m)']:
+                station_pos[r['Station']] = float(r['Position (m)'])
+
+    # Stable order (by position increasing)
+    station_items = sorted(station_pos.items(), key=lambda kv: kv[1])
+
+    fig, ax = plt.subplots(figsize=(11, 7))
+
+    # Plot each scenario
+    for _actions, timetable, label, color in scenarios:
+        prev_t = 0
+        prev_pos = 0
+        is_first = True
+        first_segment = True
+        for _, row in timetable.iterrows():
+            if is_first:
+                is_first = False
+                prev_t = row['Departure (s)']
+                prev_pos = row['Position (m)']
+                continue
+
+            arr_t = row['Arrival (s)']
+            dep_t = row['Departure (s)']
+
+            cur_pos = row['Position (m)']
+
+            ax.plot([prev_t, arr_t], [prev_pos, cur_pos], color=color, linewidth=linewidth, label=label if first_segment else None)
+            ax.plot([arr_t, dep_t], [cur_pos, cur_pos], color=color, linewidth=linewidth*2, label=label if first_segment else None)
+
+            prev_t = dep_t
+            prev_pos = cur_pos
+            first_segment = False
+        
+
+    # Y-axis: station names at their mileposts
+    if station_items:
+        y_vals = [p for _, p in station_items]
+        y_labs = [s for s, _ in station_items]
+        ax.set_yticks(y_vals)
+        ax.set_yticklabels(y_labs)
+
+    # X-axis label/format
+    ax.set_xlabel('Time (minutes)' if minutes else 'Time (seconds)')
+    if minutes:
+        ax.xaxis.set_major_locator(MultipleLocator(15 * 60))
+        ax.xaxis.set_minor_locator(MultipleLocator(5 * 60))
+        ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: timestamp_to_str_nosec(x)))
+
+    ax.set_ylabel('Station')
+    ax.set_title(name)
+    ax.grid(True, which='both', linestyle=':', linewidth=0.7)
+    ax.legend(loc='best', frameon=True)
+
+    fig.tight_layout()
+    return fig
+
+def plot_stringline_multi_actions(
+    scenarios,                      # list of (actions_df, timetable_df, label, color)
+    minutes=True,                    # x-axis in minutes
+    linewidth=1,
+    name='Stringline Diagram'
+):
+    """
+    Plot multiple scenarios on a single stringline (time-distance) diagram. This version shows the actions the train takes.
 
     Each timetable_df should have 'Station' and 'Position (m)' (milepost) rows for y-axis labels.
     """
