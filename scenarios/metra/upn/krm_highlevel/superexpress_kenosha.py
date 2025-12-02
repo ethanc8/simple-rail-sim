@@ -4,7 +4,7 @@ scenario_name = "KRM super-express to Kenosha"
 def mph(speed):
     return speed * 1.609344
 
-# Each tuple: (start milepost, end milepost, speed limit (km/h), ends at stop, name)
+# Each tuple: (start, end, speed limit (m/s), ends at stop, dwell time)
 
 # Mileposts are from https://chicagorailfan.com/mmupn.html and https://chicagorailfan.com/rfttucn.html
 # Stations north of Kenosha are from satellite imagery
@@ -12,37 +12,37 @@ def mph(speed):
 
 route = [
                                 # OGILVIE stop
-    (  0.0,   0.2, mph(10), False),
-    (  0.2,   0.5, mph(15), False),
-    (  0.5,   2.8, mph(35), False),
+    (  0.0*mi,    0.2*mi, 10*mi/h, False, dwell_time),
+    (  0.2*mi,    0.5*mi, 15*mi/h, False, dwell_time),
+    (  0.5*mi,    2.8*mi, 35*mi/h, False, dwell_time),
                                 # skip CLYBOURN
-    (  2.8,   3.5, mph(35), False),
-    (  3.5,   4.0, mph(50), False),
-    (  4.0,  35.9, mph(70), True),
+    (  2.8*mi,    3.5*mi, 35*mi/h, False, dwell_time),
+    (  3.5*mi,    4.0*mi, 50*mi/h, False, dwell_time),
+    (  4.0*mi,   35.9*mi, 70*mi/h, True, dwell_time),
                                 # skip until Waukegan
                                 # WAUKEGAN stop
-    ( 35.9,  42.1, mph(70), False),
+    ( 35.9*mi,   42.1*mi, 70*mi/h, False, dwell_time),
                                 # skip ZION
-    ( 42.1,  44.5, mph(70), False),
+    ( 42.1*mi,   44.5*mi, 70*mi/h, False, dwell_time),
                                 # skip WINTHROP HARBOR
-    ( 44.5,  51.6, mph(70), True),
+    ( 44.5*mi,   51.6*mi, 70*mi/h, True, dwell_time),
                                 # KENOSHA stop
-    ( 51.6,  55.3, mph(70), True),
+    ( 51.6*mi,   55.3*mi, 70*mi/h, True, dwell_time),
                                 # SOMERS stop
-    ( 55.3,  61.7, mph(70), True),
+    ( 55.3*mi,   61.7*mi, 70*mi/h, True, dwell_time),
                                 # RACINE stop
-    ( 61.7,  65.9, mph(70), True),
+    ( 61.7*mi,   65.9*mi, 70*mi/h, True, dwell_time),
                                 # CALEDONIA stop
-    ( 65.9,  72.0, mph(70), True),
+    ( 65.9*mi,   72.0*mi, 70*mi/h, True, dwell_time),
                                 # OAK CREEK stop
-    ( 72.0,  74.7, mph(70), True),
+    ( 72.0*mi,   74.7*mi, 70*mi/h, True, dwell_time),
                                 # SOUTH MILWAUKEE stop
-    ( 74.7,  78.2, mph(70), True),
+    ( 74.7*mi,   78.2*mi, 70*mi/h, True, dwell_time),
                                 # CUDAHY stop
-    ( 78.2,  81.5, mph(70), True),
+    ( 78.2*mi,   81.5*mi, 70*mi/h, True, dwell_time),
                                 # LINCOLN AVE stop
-    ( 81.5,  83.0, mph(70), False),
-    ( 83.0,  84.2, mph(15), True),
+    ( 81.5*mi,   83.0*mi, 70*mi/h, False, dwell_time),
+    ( 83.0*mi,   84.2*mi, 15*mi/h, True, dwell_time),
                                 # MILWAUKEE INTERMODAL stop
 
 ]
@@ -53,37 +53,37 @@ stops = {
     6.5:  'Ravenswood',
     8.1:  'Peterson/Ridge',
     9.4:  'Rogers Park',
-    11.0: 'Main Street',
-    12.0: 'Evanston',
-    13.3: 'Central Street',
-    14.4: 'Wilmette',
-    15.2: 'Kenilworth',
-    15.8: 'Indian Hill',
-    16.6: 'Winnetka',
-    17.7: 'Hubbard Woods',
-    19.2: 'Glencoe',
-    20.5: 'Braeside',
-    20.9: 'Ravinia Park',
-    21.5: 'Ravinia',
-    23.0: 'Highland Park',
-    24.5: 'Highwood',
-    25.7: 'Fort Sheridan',
-    28.3: 'Lake Forest',
-    30.2: 'Lake Bluff',
-    32.2: 'Great Lakes',
-    33.7: 'North Chicago',
-    35.9: 'Waukegan',
-    42.1: 'Zion',
-    44.5: 'Winthrop Harbor',
-    51.6: 'Kenosha',
-    55.3: 'Somers',
-    61.7: 'Racine',
-    65.9: 'Caledonia',
-    72.0: 'Oak Creek',
-    74.7: 'South Milwaukee',
-    78.2: 'Cudahy',
-    81.5: 'Lincoln Ave',
-    84.2: 'Milwaukee Intermodal'
+    11.0*mi: 'Main Street',
+    12.0*mi: 'Evanston',
+    13.3*mi: 'Central Street',
+    14.4*mi: 'Wilmette',
+    15.2*mi: 'Kenilworth',
+    15.8*mi: 'Indian Hill',
+    16.6*mi: 'Winnetka',
+    17.7*mi: 'Hubbard Woods',
+    19.2*mi: 'Glencoe',
+    20.5*mi: 'Braeside',
+    20.9*mi: 'Ravinia Park',
+    21.5*mi: 'Ravinia',
+    23.0*mi: 'Highland Park',
+    24.5*mi: 'Highwood',
+    25.7*mi: 'Fort Sheridan',
+    28.3*mi: 'Lake Forest',
+    30.2*mi: 'Lake Bluff',
+    32.2*mi: 'Great Lakes',
+    33.7*mi: 'North Chicago',
+    35.9*mi: 'Waukegan',
+    42.1*mi: 'Zion',
+    44.5*mi: 'Winthrop Harbor',
+    51.6*mi: 'Kenosha',
+    55.3*mi: 'Somers',
+    61.7*mi: 'Racine',
+    65.9*mi: 'Caledonia',
+    72.0*mi: 'Oak Creek',
+    74.7*mi: 'South Milwaukee',
+    78.2*mi: 'Cudahy',
+    81.5*mi: 'Lincoln Ave',
+    84.2*mi: 'Milwaukee Intermodal'
 }
 
 dwell_time = 30 # seconds

@@ -1,13 +1,14 @@
+from units import *
 name = 'Stadler FLIRT Akku (NAH.SH)'
 
 # https://dt5online.de/regionalverkehr/stadler-flirt-akku/
 # https://www.stadlerrail.com/api/docs/x/5aa4c05888/flirt-akku-nahsh_en.pdf
-power_weight_ratio  = 10     # kW per tonne → power/weight ratio
+power_weight_ratio  = 10 * kW/t     # kW per tonne → power/weight ratio
 
 # Assume same as normal FLIRT
-initial_accel       = 1.2       # initial max accel (m/s²)
+initial_accel       = 1.2 * m/(s**2)       # initial max accel (m/s²)
 # https://www.stadlerrail.com/api/docs/x/feee1f1a47/fakku1222e.pdf
-max_speed           = 140       # max speed (km/h)
+max_speed           = 140 * km/h       # max speed (m/s)
 
 # Running resistance (m/s)
 # The acceleration caused by running resistance is calculated as

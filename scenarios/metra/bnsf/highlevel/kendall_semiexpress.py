@@ -4,105 +4,105 @@ scenario_name = "BNSF Line - semi-express to Kendall"
 def mph(speed):
     return speed * 1.609344
 
-# Each tuple: (start milepost, end milepost, speed limit (km/h), ends at stop, name)
+# Each tuple: (start, end, speed limit (m/s), ends at stop, dwell time)
 
 # Mileposts are from https://chicagorailfan.com/mmbnsf.html
 # Speed limits are from OpenRailwayMap
 
 route = [
                                 # CHICAGO UNION STATION stop
-    (  0.0,   0.6, mph(15), False),
-    (  0.6,   0.8, mph(30), False),
-    (  0.8,   1.4, mph(25), False),
-    (  1.4,   1.8, mph(35), False),
+    (  0.0*mi,    0.6*mi, 15*mi/h, False, dwell_time),
+    (  0.6*mi,    0.8*mi, 30*mi/h, False, dwell_time),
+    (  0.8*mi,    1.4*mi, 25*mi/h, False, dwell_time),
+    (  1.4*mi,    1.8*mi, 35*mi/h, False, dwell_time),
                                 # skip HALSTED ST stop
-    (  1.8,   2.3, mph(40), False),
-    (  2.3,   3.7, mph(60), False),
+    (  1.8*mi,    2.3*mi, 40*mi/h, False, dwell_time),
+    (  2.3*mi,    3.7*mi, 60*mi/h, False, dwell_time),
                                 # skip WESTERN AVE
-    (  3.7,  13.0, mph(70), False),
+    (  3.7*mi,   13.0*mi, 70*mi/h, False, dwell_time),
                                 # skip the rest of zone 2
                                 # skip CONGRESS PARK
-    ( 13.0,  13.7, mph(70), False),
+    ( 13.0*mi,   13.7*mi, 70*mi/h, False, dwell_time),
                                 # skip LA GRANGE RD
-    ( 13.7,  14.0, mph(70), False),
+    ( 13.7*mi,   14.0*mi, 70*mi/h, False, dwell_time),
                                 # skip STONE AVE stop
-    ( 14.0,  15.4, mph(70), True),
+    ( 14.0*mi,   15.4*mi, 70*mi/h, True, dwell_time),
                                 # WESTERN SPRINGS
-    ( 15.4,  16.3, mph(70), False),
+    ( 15.4*mi,   16.3*mi, 70*mi/h, False, dwell_time),
                                 # skip HIGHLANDS
-    ( 16.3,  16.8, mph(70), True),
+    ( 16.3*mi,   16.8*mi, 70*mi/h, True, dwell_time),
                                 # HINSDALE stop
-    ( 16.8,  17.7, mph(70), False),
+    ( 16.8*mi,   17.7*mi, 70*mi/h, False, dwell_time),
                                 # skip WEST HINSDALE
-    ( 17.7,  18.2, mph(70), False),
+    ( 17.7*mi,   18.2*mi, 70*mi/h, False, dwell_time),
                                 # skip CLARENDON HILLS
-    ( 18.2,  19.5, mph(70), True),
+    ( 18.2*mi,   19.5*mi, 70*mi/h, True, dwell_time),
                                 # WESTMONT stop
-    ( 19.5,  20.3, mph(70), False),
+    ( 19.5*mi,   20.3*mi, 70*mi/h, False, dwell_time),
                                 # skip FAIRVIEW AVE
-    ( 20.3,  21.1, mph(70), True),
+    ( 20.3*mi,   21.1*mi, 70*mi/h, True, dwell_time),
                                 # DOWNERS GROVE stop
-    ( 21.1,  22.8, mph(70), True),
+    ( 21.1*mi,   22.8*mi, 70*mi/h, True, dwell_time),
                                 # BELMONT stop
-    ( 22.8,  24.4, mph(70), True),
+    ( 22.8*mi,   24.4*mi, 70*mi/h, True, dwell_time),
                                 # LISLE stop
-    ( 24.4,  28.4, mph(70), True),
+    ( 24.4*mi,   28.4*mi, 70*mi/h, True, dwell_time),
                                 # NAPERVILLE stop
-    ( 28.4,  31.7, mph(70), True),
+    ( 28.4*mi,   31.7*mi, 70*mi/h, True, dwell_time),
                                 # ROUTE 59 stop
-    ( 31.7,  35.4, mph(70), False),
-    ( 35.4,  37.4, mph(55), True),
+    ( 31.7*mi,   35.4*mi, 70*mi/h, False, dwell_time),
+    ( 35.4*mi,   37.4*mi, 55*mi/h, True, dwell_time),
                                 # AURORA stop
-    ( 37.4,  38.0, mph(55), False),
-    ( 38.0,  39.0, mph(35), False),
-    ( 39.0,  40.0, mph(75), True),
+    ( 37.4*mi,   38.0*mi, 55*mi/h, False, dwell_time),
+    ( 38.0*mi,   39.0*mi, 35*mi/h, False, dwell_time),
+    ( 39.0*mi,   40.0*mi, 75*mi/h, True, dwell_time),
                                 # MONTGOMERY stop
-    ( 40.0,  43.3, mph(79), True),
+    ( 40.0*mi,   43.3*mi, 79*mi/h, True, dwell_time),
                                 # OSWEGO stop
                                 # decently north of downtown Oswego
-    ( 43.3,  48.5, mph(79), True),
+    ( 43.3*mi,   48.5*mi, 79*mi/h, True, dwell_time),
                                 # YORKVILLE stop
                                 # decently north of downtown Yorkville
-    ( 48.5,  52.7, mph(79), True),
+    ( 48.5*mi,   52.7*mi, 79*mi/h, True, dwell_time),
                                 # PLANO stop
                                 # at Little Rock Rd, not in downtown Plano
-    ( 52.7,  56.9, mph(79), True),
+    ( 52.7*mi,   56.9*mi, 79*mi/h, True, dwell_time),
                                 # SANDWICH stop
                                 # at Fairwind Blvd, not in downtown Sandwich
 ]
 
 stops = {
-    0.0: 'Chicago Union Station',
-    1.8: 'Halsted St',
-    3.7: 'Western Ave',
-    6.9: 'Cicero',
-    9.0: 'LaVergne',
-    9.5: 'Berwyn',
-    10.1: 'Harlem Ave',
-    11.0: 'Riverside',
-    11.8: 'Hollywood',
-    12.4: 'Brookfield',
-    13.0: 'Congress Park',
-    13.7: 'LaGrange Rd',
-    14.0: 'Stone Ave',
-    15.4: 'Western Springs',
-    16.3: 'Highlands',
-    16.8: 'Hinsdale',
-    17.7: 'West Hinsdale',
-    18.2: 'Clarendon Hills',
-    19.5: 'Westmont',
-    20.3: 'Fairview Ave.',
-    21.1: 'Downers Grove',
-    22.8: 'Belmont',
-    24.4: 'Lisle',
-    28.4: 'Naperville',
-    31.7: 'Route 59',
-    37.4: 'Aurora',
-    40.0: 'Montgomery',
-    43.3: 'Oswego',
-    48.5: 'Yorkville',
-    52.7: 'Plano',
-    56.9: 'Sandwich'
+    0.0*mi: 'Chicago Union Station',
+    1.8*mi: 'Halsted St',
+    3.7*mi: 'Western Ave',
+    6.9*mi: 'Cicero',
+    9.0*mi: 'LaVergne',
+    9.5*mi: 'Berwyn',
+    10.1*mi: 'Harlem Ave',
+    11.0*mi: 'Riverside',
+    11.8*mi: 'Hollywood',
+    12.4*mi: 'Brookfield',
+    13.0*mi: 'Congress Park',
+    13.7*mi: 'LaGrange Rd',
+    14.0*mi: 'Stone Ave',
+    15.4*mi: 'Western Springs',
+    16.3*mi: 'Highlands',
+    16.8*mi: 'Hinsdale',
+    17.7*mi: 'West Hinsdale',
+    18.2*mi: 'Clarendon Hills',
+    19.5*mi: 'Westmont',
+    20.3*mi: 'Fairview Ave.',
+    21.1*mi: 'Downers Grove',
+    22.8*mi: 'Belmont',
+    24.4*mi: 'Lisle',
+    28.4*mi: 'Naperville',
+    31.7*mi: 'Route 59',
+    37.4*mi: 'Aurora',
+    40.0*mi: 'Montgomery',
+    43.3*mi: 'Oswego',
+    48.5*mi: 'Yorkville',
+    52.7*mi: 'Plano',
+    56.9*mi: 'Sandwich'
 }
 
 dwell_time = 30 # seconds

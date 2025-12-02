@@ -1,10 +1,12 @@
+from units import *
+
 name = 'Northeast Regional (hauled by Siemens ACS-64)'
 
 # https://pedestrianobservations.com/2018/06/28/the-value-of-modern-emus/
 #   (experimentally measured by Ari Ofsevit)
-power_weight_ratio  = 20     # kW per tonne → power/weight ratio
-initial_accel       = 0.44       # initial max accel (m/s²)
-max_speed           = 217       # max speed (km/h)
+power_weight_ratio  = 20 * kW/t     # kW per tonne → power/weight ratio
+initial_accel       = 0.44 * m/(s**2)      # initial max accel (m/s²)
+max_speed           = 217 * km/h       # max speed (m/s)
 
 # Running resistance (m/s)
 # The acceleration caused by running resistance is calculated as

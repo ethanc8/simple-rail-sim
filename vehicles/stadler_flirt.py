@@ -1,14 +1,15 @@
+from units import *
 name = 'Stadler FLIRT'
 
 # https://pedestrianobservations.com/2018/06/28/the-value-of-modern-emus/
 # Power-weight ratio is 21.1 kW/t, without passengers
 #   (https://documents.epfl.ch/users/a/al/allenbac/www/documents/Fich0321.pdf)
 # Adding the mass of passengers reduces it to around 20
-power_weight_ratio  = 20     # kW per tonne → power/weight ratio
+power_weight_ratio  = 20 * kW/t     # kW per tonne → power/weight ratio
 
 # https://documents.epfl.ch/users/a/al/allenbac/www/documents/Fich0321.pdf
-initial_accel       = 1.2       # initial max accel (m/s²)
-max_speed           = 160       # max speed (km/h)
+initial_accel       = 1.2 * m/(s**2)       # initial max accel (m/s²)
+max_speed           = 160 * km/h      # max speed (m/s)
 
 # Running resistance (m/s)
 # The acceleration caused by running resistance is calculated as

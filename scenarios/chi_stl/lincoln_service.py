@@ -10,7 +10,7 @@ def trra(mp):
     # But they go down as you approach St Louis
     return alton_orig((9.0 - mp) + 274.4 + 0.7)
 
-# Each tuple: (start milepost, end milepost, speed limit (km/h), ends at stop, name)
+# Each tuple: (start, end, speed limit (m/s), ends at stop, dwell time)
 
 # Joliet-Alton was partially upgraded to 110 mph (177 km/h) recently
 #   sources for which parts: OpenRailwayMap, reports and articles found by ChatGPT
@@ -19,71 +19,71 @@ def trra(mp):
 #   (https://experience.arcgis.com/experience/b6c12fd0a4774f38a303e3d034775854/)
 route = [
                                 # CHICAGO UNION STATION stop
-    (  0.0,   2.0,  40, False), # 25 mph access to CUS
-    (  2.0,   3.5,  65, False), # 40 mph shared with BNSF
-    (  3.5,  11.9, 127, True),
+    (  0.0*mi,    2.0*mi, 40*km/h, False, dwell_time), # 25 mph access to CUS
+    (  2.0*mi,    3.5*mi, 65*km/h, False, dwell_time), # 40 mph shared with BNSF
+    (  3.5*mi,   11.9*mi, 127*km/h, True, dwell_time),
                                 # SUMMIT stop
-    ( 11.9,  37.2, 127, True),
+    ( 11.9*mi,   37.2*mi, 127*km/h, True, dwell_time),
                                 # JOLIET stop
-    ( 37.2,  40.0, 105, False), # exiting Joliet
-    ( 40.0,  45.6, 177, False),
-    ( 45.6,  46.0, 129, False), # Elwood curve
-    ( 46.0,  52.0, 177, False),
-    ( 52.0,  53.0, 113, False), # Wilmington curve and bridge
-    ( 53.0,  72.5, 177, False),
-    ( 72.5,  72.8,  80, False), # Crossing NS Kankakee Branch
-    ( 72.8,  73.8, 177, True),
+    ( 37.2*mi,   40.0*mi, 105*km/h, False, dwell_time), # exiting Joliet
+    ( 40.0*mi,   45.6*mi, 177*km/h, False, dwell_time),
+    ( 45.6*mi,   46.0*mi, 129*km/h, False, dwell_time), # Elwood curve
+    ( 46.0*mi,   52.0*mi, 177*km/h, False, dwell_time),
+    ( 52.0*mi,   53.0*mi, 113*km/h, False, dwell_time), # Wilmington curve and bridge
+    ( 53.0*mi,   72.5*mi, 177*km/h, False, dwell_time),
+    ( 72.5*mi,   72.8*mi, 80*km/h, False, dwell_time), # Crossing NS Kankakee Branch
+    ( 72.8*mi,   73.8*mi, 177*km/h, True, dwell_time),
                                 # DWIGHT stop
-    ( 73.8,  77.5, 177, False),
-    ( 77.5,  77.8, 161, False), # Dwight-Odell curve and short bridge
-    ( 77.8,  91.1, 177, False),
-    ( 91.1,  91.3, 129, False), # Pontiac curve
-    ( 91.3,  92.5, 177, True),
+    ( 73.8*mi,   77.5*mi, 177*km/h, False, dwell_time),
+    ( 77.5*mi,   77.8*mi, 161*km/h, False, dwell_time), # Dwight-Odell curve and short bridge
+    ( 77.8*mi,   91.1*mi, 177*km/h, False, dwell_time),
+    ( 91.1*mi,   91.3*mi, 129*km/h, False, dwell_time), # Pontiac curve
+    ( 91.3*mi,   92.5*mi, 177*km/h, True, dwell_time),
                                 # PONTIAC stop
-    ( 92.5, 109.5, 177, False),
-    (109.5, 109.9, 153, False), # Lexington curve
-    (109.9, 123.0, 177, False),
-    (123.0, 124.1,  80, True),
+    ( 92.5*mi,  109.5*mi, 177*km/h, False, dwell_time),
+    (109.5*mi,  109.9*mi, 153*km/h, False, dwell_time), # Lexington curve
+    (109.9*mi,  123.0*mi, 177*km/h, False, dwell_time),
+    (123.0*mi,  124.1*mi, 80*km/h, True, dwell_time),
                                 # BLOOMINGTON-NORMAL stop
-    (124.1, 126.6,  80, False),
-    (126.6, 130.3, 177, False),
-    (130.3, 130.6, 153, False), # Shirley curve
-    (130.6, 145.6, 177, False),
-    (145.6, 146.0, 137, False), # First Atlanta curve
-    (146.0, 149.0, 153, False), # Second and third Atlanta curve
-    (149.0, 156.4, 177, True),
+    (124.1*mi,  126.6*mi, 80*km/h, False, dwell_time),
+    (126.6*mi,  130.3*mi, 177*km/h, False, dwell_time),
+    (130.3*mi,  130.6*mi, 153*km/h, False, dwell_time), # Shirley curve
+    (130.6*mi,  145.6*mi, 177*km/h, False, dwell_time),
+    (145.6*mi,  146.0*mi, 137*km/h, False, dwell_time), # First Atlanta curve
+    (146.0*mi,  149.0*mi, 153*km/h, False, dwell_time), # Second and third Atlanta curve
+    (149.0*mi,  156.4*mi, 177*km/h, True, dwell_time),
                                 # LINCOLN stop
-    (156.4, 157.0, 177, False),
-    (157.0, 157.5, 153, False), # Lincoln curve
-    (157.5, 185.1, 177, True),
+    (156.4*mi,  157.0*mi, 177*km/h, False, dwell_time),
+    (157.0*mi,  157.5*mi, 153*km/h, False, dwell_time), # Lincoln curve
+    (157.5*mi,  185.1*mi, 177*km/h, True, dwell_time),
                                 # SPRINGFIELD stop
-    (185.1, 187.4,  97, False),
-    (187.4, 223.8, 177, True),
+    (185.1*mi,  187.4*mi, 97*km/h, False, dwell_time),
+    (187.4*mi,  223.8*mi, 177*km/h, True, dwell_time),
                                 # CARLINVILLE stop
-    (223.8, 256.8, 130, True),
+    (223.8*mi,  256.8*mi, 130*km/h, True, dwell_time),
                                 # ALTON stop
     # Parts of Carlinville-Alton are 110 mph (177 km/h)
     # but it's very curvy. The fastest timetabled time is 25 min.
-    (256.8, 259.6, 145, False),
-    (alton_orig(262.1), alton_orig(270.0), 145, False),
-    (alton_orig(270.0), alton_orig(274.4), 145, False),
-    (alton_orig(274.4), trra(1.5), 40, True),
+    (256.8*mi,  259.6*mi, 145*km/h, False, dwell_time),
+    (alton_orig(262.1)*mi,  alton_orig(270.0)*mi, 145*km/h, False, dwell_time),
+    (alton_orig(270.0)*mi,  alton_orig(274.4)*mi, 145*km/h, False, dwell_time),
+    (alton_orig(274.4)*mi,  trra(1.5)*mi, 40*km/h, True, dwell_time),
                                 # ST. LOUIS stop
     # In reality it takes at ~45 min (timetabled) to get to STL from Alton.
 ]
 
 stops = {
-    0.0: 'Chicago Union Station',
-    11.9: 'Summit',
-    37.2: 'Joliet',
-    73.8: 'Dwight',
-    92.5: 'Pontiac',
-    124.1: 'Bloomington-Normal',
-    156.4: 'Lincoln',
-    185.1: 'Springfield',
-    223.8: 'Carlinville',
-    256.8: 'Alton',
-    trra(1.5): 'St. Louis',
+    0.0*mi: 'Chicago Union Station',
+    11.9*mi: 'Summit',
+    37.2*mi: 'Joliet',
+    73.8*mi: 'Dwight',
+    92.5*mi: 'Pontiac',
+    124.1*mi: 'Bloomington-Normal',
+    156.4*mi: 'Lincoln',
+    185.1*mi: 'Springfield',
+    223.8*mi: 'Carlinville',
+    256.8*mi: 'Alton',
+    trra(1.5)*mi: 'St. Louis',
 }
 
 dwell_time = 60 # seconds

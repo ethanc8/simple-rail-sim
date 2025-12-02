@@ -5,6 +5,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FuncFormatter
 
+from units import *
+
+import os, sys
+
+sys.path.append(os.path.realpath(__file__))
+
 # ---- 1) Define the integral-based accel/decel functions ----
 
 def integratel(f, x1, x2, n=2000):
@@ -69,15 +75,10 @@ def simulate(scenario, vehicle, depart_time=0.0):
     t_dec = make_dectime_fn(vehicle.power_weight_ratio, vehicle.a_coef, vehicle.b_coef, vehicle.c_coef, vehicle.initial_accel)
     d_dec = make_decdist_fn(vehicle.power_weight_ratio, vehicle.a_coef, vehicle.b_coef, vehicle.c_coef, vehicle.initial_accel)
 
-    # Helper to convert speeds:
-    kmh2ms = lambda v: v * 1000/3600
-    ms2kmh = lambda v: v * 3600/1000
-    mile2m = 1609.34
+    vehicle_max_speed_ms = vehicle.max_speed
 
-    vehicle_max_speed_ms = kmh2ms(vehicle.max_speed)
-
-    def limited_kmh2ms(v):
-        return min(kmh2ms(v), vehicle_max_speed_ms)
+    def limited_speed(v):
+        return min(v, vehicle_max_speed_ms)
 
     # ---- 3) Build the station timetable ----
 
@@ -90,7 +91,9 @@ def simulate(scenario, vehicle, depart_time=0.0):
     # Departure
     timetable.append({
         'Station': stops[0.0],
+        'Position (m)': 0.0,
         'MP': 0.0,
+        'KMP': 0.0,
         'Arrival': None,
         'Departure': timestamp_to_str(depart_time)
     })
@@ -104,13 +107,13 @@ def simulate(scenario, vehicle, depart_time=0.0):
             else: lo = mid
         return lo
 
-    for start, end, spd, stop in route:
+    for start, end, spd, stop, dwell_time in route:
         segment_start_pos = pos_cum
-        segment_length = (end - start) * mile2m
-        v_lim   = limited_kmh2ms(spd)
+        segment_length = (end - start)
+        v_lim   = limited_speed(spd)
         cruising = True
         # determine next speed for decel
-        v_next = 0.0 if stop else limited_kmh2ms(route[route.index((start,end,spd,stop))+1][2])
+        v_next = 0.0 if stop else limited_speed(route[route.index((start,end,spd,stop))+1][2])
 
         # check reachability
         if d_acc(v_prev, v_lim) + d_dec(v_lim, v_next) > segment_length:
@@ -128,10 +131,10 @@ def simulate(scenario, vehicle, depart_time=0.0):
                 'Phase': 'Accelerate',
                 'Start Pos (m)': segment_start_pos,
                 'End Pos (m)'  : segment_start_pos + d1,
-                'Start Pos (mi)': segment_start_pos / mile2m,
-                'End Pos (mi)'  : (segment_start_pos + d1) / mile2m,
-                'Start Speed (km/h)': ms2kmh(v_prev),
-                'End Speed (km/h)': ms2kmh(v_max),
+                'Start Pos (mi)': segment_start_pos / mi,
+                'End Pos (mi)'  : (segment_start_pos + d1) / mi,
+                'Start Speed (km/h)': v_prev / (km/h),
+                'End Speed (km/h)': v_max / (km/h),
                 'Start Time': timestamp_to_str(t_cum),
                 'End Time': timestamp_to_str(t_cum + t1),
                 'Start Time (s)': (t_cum),
@@ -150,10 +153,10 @@ def simulate(scenario, vehicle, depart_time=0.0):
                     'Phase': 'Cruise',
                     'Start Pos (m)': pos_cum,
                     'End Pos (m)'  : pos_cum + d2,
-                    'Start Pos (mi)': pos_cum / mile2m,
-                    'End Pos (mi)'  : (pos_cum + d2) / mile2m,
-                    'Start Speed (km/h)': ms2kmh(v_max),
-                    'End Speed (km/h)': ms2kmh(v_max),
+                    'Start Pos (mi)': pos_cum / mi,
+                    'End Pos (mi)'  : (pos_cum + d2) / mi,
+                    'Start Speed (km/h)': v_max / (km/h),
+                    'End Speed (km/h)': v_max / (km/h),
                     'Start Time': timestamp_to_str(t_cum),
                 'End Time': timestamp_to_str(t_cum + t2),
                 'Start Time (s)': (t_cum),
@@ -170,10 +173,10 @@ def simulate(scenario, vehicle, depart_time=0.0):
                 'Phase': 'Decelerate',
                 'Start Pos (m)': pos_cum,
                 'End Pos (m)'  : pos_cum + d3,
-                'Start Pos (mi)': pos_cum / mile2m,
-                'End Pos (mi)'  : (pos_cum + d3) / mile2m,
-                'Start Speed (km/h)': ms2kmh(v_max),
-                'End Speed (km/h)': ms2kmh(v_next),
+                'Start Pos (mi)': pos_cum / mi,
+                'End Pos (mi)'  : (pos_cum + d3) / mi,
+                'Start Speed (km/h)': v_max / (km/h),
+                'End Speed (km/h)': v_next / (km/h),
                 'Start Time': timestamp_to_str(t_cum),
                 'End Time': timestamp_to_str(t_cum + t3),
                 'Start Time (s)': (t_cum),
@@ -188,24 +191,26 @@ def simulate(scenario, vehicle, depart_time=0.0):
                 'Phase': 'Dwell',
                 'Start Pos (m)': pos_cum,
                 'End Pos (m)'  : pos_cum,
-                'Start Pos (mi)': pos_cum / mile2m,
-                'End Pos (mi)'  : pos_cum / mile2m,
+                'Start Pos (mi)': pos_cum / mi,
+                'End Pos (mi)'  : pos_cum / mi,
                 'Start Speed (km/h)': 0.0,
                 'End Speed (km/h)': 0.0,
                 'Start Time': timestamp_to_str(t_cum),
-                'End Time': timestamp_to_str(t_cum + scenario.dwell_time),
+                'End Time': timestamp_to_str(t_cum + dwell_time),
                 'Start Time (s)': (t_cum),
-                'End Time (s)': (t_cum + scenario.dwell_time)
+                'End Time (s)': (t_cum + dwell_time)
             })
 
             timetable.append({
                 'Station': stops[end],
-                'MP'     : end,
+                'Position (m)'     : end,
+                'MP'     : end / mi,
+                'KMP'     : end / km,
                 'Arrival': timestamp_to_str(t_cum),
-                'Departure': timestamp_to_str(t_cum + scenario.dwell_time)
+                'Departure': timestamp_to_str(t_cum + dwell_time)
             })
 
-            t_cum += scenario.dwell_time
+            t_cum += dwell_time
 
             v_prev = 0.0
         else:
@@ -217,7 +222,7 @@ def simulate(scenario, vehicle, depart_time=0.0):
 
     timetable_df = pd.DataFrame(timetable)
     print("\n=== Timetable ===")
-    print(timetable_df.to_string(index=False))
+    print(timetable_df[['Station', 'MP', 'Arrival', 'Departure']].to_string(index=False))
 
     return actions_df, timetable_df
 
@@ -229,10 +234,9 @@ def plot_stringline(actions_df, timetable_df, color='tab:blue', linewidth=1):
       - cruise/dwell as straight lines
     """
     # map station names → vertical positions (m)
-    mile2m = 1609.34
     station_positions = {
-        row['Station']: row['MP'] * mile2m
-        for _, row in timetable_df.iterrows() if row['MP'] is not None
+        row['Station']: row['Position (m)']
+        for _, row in timetable_df.iterrows() if row['Position (m)'] is not None
     }
     
     fig, ax = plt.subplots(figsize=(10,6))
@@ -295,16 +299,15 @@ def plot_stringline_multi(
     """
     Plot multiple scenarios on a single stringline (time-distance) diagram.
 
-    Each timetable_df should have 'Station' and 'MP' (milepost) rows for y-axis labels.
+    Each timetable_df should have 'Station' and 'Position (m)' (milepost) rows for y-axis labels.
     """
 
     # Collect station y-axis ticks from all scenarios (union of stations)
-    mile2m = 1609.34
     station_pos = {}
     for _actions_df, ttab, _label, _color in scenarios:
         for _, r in ttab.iterrows():
-            if 'MP' in r and r['MP'] is not None and r['MP'] == r['MP']:
-                station_pos[r['Station']] = float(r['MP']) * mile2m
+            if 'Position (m)' in r and r['Position (m)'] is not None and r['Position (m)'] == r['Position (m)']:
+                station_pos[r['Station']] = float(r['Position (m)'])
 
     # Stable order (by position increasing)
     station_items = sorted(station_pos.items(), key=lambda kv: kv[1])

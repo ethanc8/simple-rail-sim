@@ -1,10 +1,12 @@
+from units import *
+
 name = 'MBTA commuter train'
 
 # https://pedestrianobservations.com/2018/06/28/the-value-of-modern-emus/
 #   (experimentally measured by Alon Levy)
-power_weight_ratio  = 5     # kW per tonne → power/weight ratio
-initial_accel       = 0.3       # initial max accel (m/s²)
-max_speed           = 160       # max speed (km/h)
+power_weight_ratio  = 5 * kW/t     # kW per tonne → power/weight ratio
+initial_accel       = 0.3 * m/(s**2)      # initial max accel (m/s²)
+max_speed           = 160 * km/h      # max speed (m/s)
 
 # Running resistance (m/s)
 # The acceleration caused by running resistance is calculated as

@@ -1,15 +1,17 @@
+from units import *
+
 name = 'Amtrak Midwest - Siemens Charger with 5 railcars'
 
 # Calculate power-weight ratio
-power = 3300 # kW, Siemens Charger SC-44
-locomotive_mass = 120 # t
-empty_railcar_mass = 50.802 # t
-average_person_mass = 0.08405 # t
+power = 3300 * kW # Siemens Charger SC-44
+locomotive_mass = 120 * t
+empty_railcar_mass = 50.802 * t
+average_person_mass = 0.08405 * t
 total_mass = locomotive_mass + 5*(empty_railcar_mass + 60*average_person_mass)
 
 power_weight_ratio  = power/total_mass     # kW per tonne → power/weight ratio
-initial_accel       = 0.3       # initial max accel (m/s²)
-max_speed           = 200       # max speed (km/h)
+initial_accel       = 0.3 * m/(s**2)       # initial max accel (m/s²)
+max_speed           = 200 * km/h       # max speed (m/s)
 
 # Running resistance (m/s)
 # The acceleration caused by running resistance is calculated as

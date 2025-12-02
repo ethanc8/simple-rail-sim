@@ -1,13 +1,10 @@
+from units import *
 name = 'Highliner II'
 
-# convert mph to km/h
-def mph(speed):
-    return speed * 1.609344
-
-average_person_mass = 0.08405 # t
-railcar_mass = 67 + 150 * average_person_mass # t
+average_person_mass = 0.08405 * t
+railcar_mass = 67 * t + 150 * average_person_mass
 # A typical gallery car has a capacity of 153-161 people
-railcar_power = 600 #kW
+railcar_power = 600 * kW
 
 # https://pedestrianobservations.com/2018/06/28/the-value-of-modern-emus/
 # Power-weight ratio is 21.1 kW/t, without passengers
@@ -16,10 +13,10 @@ railcar_power = 600 #kW
 power_weight_ratio  = railcar_power/railcar_mass     # kW per tonne → power/weight ratio
 
 # https://documents.epfl.ch/users/a/al/allenbac/www/documents/Fich0321.pdf
-initial_accel       = 0.581       # initial max accel (m/s²)
-max_speed           = mph(90)       # max speed (km/h)
+initial_accel       = 0.581 * m/(s**2)       # initial max accel (m/s²)
+max_speed           = 90 * mi/h       # max speed (m/s)
 
-# Running resistance (m/s)a
+# Running resistance (m/s)
 # The acceleration caused by running resistance is calculated as
 #   a_res = a + bv + cv^2.
 

@@ -1,10 +1,11 @@
+from units import *
 name = 'N700 Series Shinkansen'
 
 # Power-weight ratio and initial acceleration are from
 # https://pedestrianobservations.com/2018/06/28/the-value-of-modern-emus/
-power_weight_ratio  = 26.74 # kW per tonne → power/weight ratio
-initial_accel       = 0.9   # initial max accel (m/s²)
-max_speed           = 300   # max speed (km/h)
+power_weight_ratio  = 26.74 * kW/t # kW per tonne → power/weight ratio
+initial_accel       = 0.9 * m/(s**2)  # initial max accel (m/s²)
+max_speed           = 300 * km/h  # max speed (m/s)
 
 # Running resistance (m/s)
 # The acceleration caused by running resistance is calculated as

@@ -1,11 +1,12 @@
+from units import *
 name = 'X 2000 (Swedish State Railways)'
 
 # Power-weight ratio is calculated from
 # https://web.archive.org/web/20161027012301if_/https://www.ave.kth.se/polopoly_fs/1.178975!/Menu/general/column-content/attachment/Tiliting%20trains.pdf
-power_weight_ratio  = 11.50     # kW per tonne → power/weight ratio
+power_weight_ratio  = 11.50 * kW/t    # kW per tonne → power/weight ratio
 # Initial acceleration is unknown; we assume the same as the N700 Shinkansen
-initial_accel       = 0.9       # initial max accel (m/s²)
-max_speed           = 210       # max speed (km/h)
+initial_accel       = 0.9 * m/(s**2)      # initial max accel (m/s²)
+max_speed           = 210 * km/h      # max speed (m/s)
 
 # Running resistance (m/s)
 # The acceleration caused by running resistance is calculated as
