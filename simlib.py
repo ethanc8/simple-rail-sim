@@ -319,11 +319,12 @@ def plot_stringline_multi_timetable(
         for _, r in ttab.iterrows():
             if 'Position (m)' in r and r['Position (m)'] is not None and r['Position (m)'] == r['Position (m)']:
                 station_pos[r['Station']] = float(r['Position (m)'])
+                # if float(r['Position (m)']) > 35.9 * mi: break
 
     # Stable order (by position increasing)
     station_items = sorted(station_pos.items(), key=lambda kv: kv[1])
 
-    fig, ax = plt.subplots(figsize=(11, 7))
+    fig, ax = plt.subplots(figsize=(22, 14))
 
     # Plot each scenario
     for _actions, timetable, label, color in scenarios:
@@ -342,6 +343,7 @@ def plot_stringline_multi_timetable(
             dep_t = row['Departure (s)']
 
             cur_pos = row['Position (m)']
+            # if cur_pos > 35.9 * mi: break
 
             ax.plot([prev_t, arr_t], [prev_pos, cur_pos], color=color, linewidth=linewidth, label=label if first_segment else None)
             ax.plot([arr_t, dep_t], [cur_pos, cur_pos], color=color, linewidth=linewidth*2, label=label if first_segment else None)
