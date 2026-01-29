@@ -66,6 +66,8 @@ def timestamp_to_str_nosec(timestamp):
 # ---- 2) Set train & track parameters ----
 
 def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
+    reverse_sign = 1 if not reverse else -1
+
     route = scenario.route
     stops = scenario.stops
 
@@ -118,16 +120,57 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
 
     num_segments = len(route)
 
-    if not reverse:
-        indices = range(num_segments)
-    else:
-        indices = range(num_segments-1, -1, -1)
+    i = 0 if not reverse else num_segments - 1
 
-    for i in indices:
+    while i < num_segments and i >= 0:
         start, end, spd, stop, dwell_time = route[i]
 
-        if reverse:
-            start, end = end, start
+        if reverse: start, end = end, start
+
+        # Merge forward through pass-through boundaries with same speed
+        j = i
+        start_eff = start
+        end_eff = end
+        # merged_pass_throughs = []
+
+        while True:
+            j_start, j_end, j_spd, j_stop, j_dwell_time = route[j]
+            if reverse: j_start, j_end = j_end, j_start
+            # If current segment ends in a stop, end here
+            if j_stop is True:
+                end_eff = j_end
+                break
+
+            # If next segment doesn't exist, end here (branch exit possible)
+            if j + 1 >= num_segments:
+                end_eff = j_end
+                break
+
+            next_start, next_end, next_spd, next_stop, next_dwell = route[j+reverse_sign]
+            if reverse: next_start, next_end = next_end, next_start
+            # If speed changes at the boundary, end here
+            if next_spd != spd:
+                end_eff = j_end
+                break
+
+            # Speed is same. If the boundary station is a pass-through (next_stop=False),
+            # we can merge by extending to next_end.
+            if next_stop is False:
+                # merged_pass_throughs.append(next_start)  # boundary position (optional)
+                j += reverse_sign
+                end_eff = next_end
+                continue
+
+            # If next segment is a required stop, we can include that segment but must end there.
+            # (We merge through the segment itself; we just stop at its end.)
+            j += reverse_sign
+            end_eff = next_end
+            stop = True
+            dwell_time = next_dwell
+            break
+        
+        start = start_eff
+        end = end_eff
         
         segment_start_pos = pos_cum
         segment_length = abs(end - start)
@@ -268,6 +311,8 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
     
         if abs(pos_cum - end) > 1e-3:
             raise RuntimeError(f"Segment end mismatch at route[{i}]: expected {end}, got {pos_cum}")
+        
+        i = j + reverse_sign
 
     actions_df = pd.DataFrame(actions)
     print("\n=== Action Breakdown ===")
