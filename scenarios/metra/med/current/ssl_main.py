@@ -53,7 +53,7 @@ route = [
                                 # 111TH-PULLMAN stop
     ( 13.95*mi,   14.49*mi, 65*mi/h, False, long_dwell),
                                 # 115TH-KENSINGTON stop
-    ( 14.49*mi,   15.93*mi, 65*mi/h, True, long_dwell),
+    ( 14.49*mi,   15.93*mi, 65*mi/h, False, 0),
                                 # [to SSL]
 ]
 

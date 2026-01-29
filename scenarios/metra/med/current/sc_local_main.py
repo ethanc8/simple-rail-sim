@@ -31,7 +31,7 @@ route = [
                                 # 59TH STREET stop
     (  7.43*mi,    7.92*mi, 65*mi/h, True, dwell_time),
                                 # 63RD STREET stop
-    (  7.92*mi,    8.83*mi, 65*mi/h, True, dwell_time),
+    (  7.92*mi,    8.83*mi, 65*mi/h, False, 0),
                                 # [to SC]
 ]
 
