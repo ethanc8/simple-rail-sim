@@ -181,10 +181,10 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
         is_branch = False
         if stop:
             v_next = 0.0
-        elif not reverse and i + 1 < num_segments:
-            v_next = limited_speed(route[i+1][2])
-        elif reverse and i - 1 >= 0:
-            v_next = limited_speed(route[i-1][2])
+        elif not reverse and j + 1 < num_segments:
+            v_next = limited_speed(route[j+1][2])
+        elif reverse and j - 1 >= 0:
+            v_next = limited_speed(route[j-1][2])
         else:
             is_branch = True
             v_next = v_lim
