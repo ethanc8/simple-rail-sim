@@ -9,7 +9,16 @@ multitrip = importlib.import_module(f'multitrips.{multitrip_id}')
 solved_trips = []
 
 for trip in multitrip.trips:
-    scenario_id, vehicle_id, depart_time, label, color = trip
+    scenario_id = trip[0]
+    vehicle_id = trip[1]
+    depart_time = trip[2]
+    label = trip[3]
+    color = trip[4]
+    
+    reverse = False
+    if len(trip) > 5:
+        reverse = trip[5]
+    
     scenario = importlib.import_module(f'scenarios.{scenario_id}')
     print(f"Scenario: {scenario.scenario_name}")
 
@@ -18,7 +27,7 @@ for trip in multitrip.trips:
 
     # ---- 2) Set train & track parameters ----
 
-    actions_df, timetable_df = simlib.simulate(scenario, vehicle, depart_time)
+    actions_df, timetable_df = simlib.simulate(scenario, vehicle, depart_time, reverse=reverse)
     solved_trips.append((actions_df, timetable_df, label, color))
 
 # Stringline diagram

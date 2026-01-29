@@ -65,7 +65,7 @@ def timestamp_to_str_nosec(timestamp):
 
 # ---- 2) Set train & track parameters ----
 
-def simulate(scenario, vehicle, depart_time=0.0):
+def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
     route = scenario.route
     stops = scenario.stops
 
@@ -82,18 +82,22 @@ def simulate(scenario, vehicle, depart_time=0.0):
 
     # ---- 3) Build the station timetable ----
 
+    start_pos = route[0][0]
+    if reverse:
+        start_pos = route[-1][1]
+
     timetable = []
     actions = []
     t_cum = depart_time # seconds since departure
     v_prev = 0.0 # m/s
-    pos_cum = 0.0 # m
+    pos_cum = start_pos # m
 
     # Departure
     timetable.append({
-        'Station': stops[0.0],
-        'Position (m)': 0.0,
-        'MP': 0.0,
-        'KMP': 0.0,
+        'Station': stops[start_pos],
+        'Position (m)': start_pos,
+        'MP': start_pos / mi,
+        'KMP': start_pos / km,
         'Arrival': None,
         'Arrival (s)': None,
         'Departure': timestamp_to_str(depart_time),
@@ -109,9 +113,18 @@ def simulate(scenario, vehicle, depart_time=0.0):
             else: lo = mid
         return lo
 
+    if reverse:
+        route = reversed(route)
+
     for start, end, spd, stop, dwell_time in route:
+        if reverse:
+            start_tmp = start
+            start = end
+            end = start_tmp
+        
         segment_start_pos = pos_cum
-        segment_length = (end - start)
+        segment_length = abs(end - start)
+        sign = -1 if end < start else 1
         v_lim   = limited_speed(spd)
         cruising = True
         # determine next speed for decel
@@ -132,9 +145,9 @@ def simulate(scenario, vehicle, depart_time=0.0):
             actions.append({
                 'Phase': 'Accelerate',
                 'Start Pos (m)': segment_start_pos,
-                'End Pos (m)'  : segment_start_pos + d1,
+                'End Pos (m)'  : segment_start_pos + d1 * sign,
                 'Start Pos (mi)': segment_start_pos / mi,
-                'End Pos (mi)'  : (segment_start_pos + d1) / mi,
+                'End Pos (mi)'  : (segment_start_pos + d1 * sign) / mi,
                 'Start Speed (km/h)': v_prev / (km/h),
                 'End Speed (km/h)': v_max / (km/h),
                 'Start Time': timestamp_to_str(t_cum),
@@ -143,7 +156,7 @@ def simulate(scenario, vehicle, depart_time=0.0):
                 'End Time (s)': (t_cum + t1)
             })
             t_cum += t1
-            pos_cum += d1
+            pos_cum += d1 * sign
 
         # 2) Cruise block
         d3 = d_dec(v_max, v_next)
@@ -154,9 +167,9 @@ def simulate(scenario, vehicle, depart_time=0.0):
                 actions.append({
                     'Phase': 'Cruise',
                     'Start Pos (m)': pos_cum,
-                    'End Pos (m)'  : pos_cum + d2,
+                    'End Pos (m)'  : pos_cum + d2 * sign,
                     'Start Pos (mi)': pos_cum / mi,
-                    'End Pos (mi)'  : (pos_cum + d2) / mi,
+                    'End Pos (mi)'  : (pos_cum + d2 * sign) / mi,
                     'Start Speed (km/h)': v_max / (km/h),
                     'End Speed (km/h)': v_max / (km/h),
                     'Start Time': timestamp_to_str(t_cum),
@@ -165,7 +178,7 @@ def simulate(scenario, vehicle, depart_time=0.0):
                 'End Time (s)': (t_cum + t2)
                 })
             t_cum += t2
-            pos_cum += d2
+            pos_cum += d2 * sign
 
         # 3) Deceleration block
         if v_next < v_max:
@@ -174,9 +187,9 @@ def simulate(scenario, vehicle, depart_time=0.0):
             actions.append({
                 'Phase': 'Decelerate',
                 'Start Pos (m)': pos_cum,
-                'End Pos (m)'  : pos_cum + d3,
+                'End Pos (m)'  : pos_cum + d3 * sign,
                 'Start Pos (mi)': pos_cum / mi,
-                'End Pos (mi)'  : (pos_cum + d3) / mi,
+                'End Pos (mi)'  : (pos_cum + d3 * sign) / mi,
                 'Start Speed (km/h)': v_max / (km/h),
                 'End Speed (km/h)': v_next / (km/h),
                 'Start Time': timestamp_to_str(t_cum),
@@ -185,7 +198,7 @@ def simulate(scenario, vehicle, depart_time=0.0):
                 'End Time (s)': (t_cum + t3)
             })
             t_cum += t3
-            pos_cum += d3
+            pos_cum += d3 * sign
 
         # 4) Dwell (if stop)
         if stop:
