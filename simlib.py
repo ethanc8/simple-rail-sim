@@ -113,10 +113,12 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
             else: lo = mid
         return lo
 
+    num_segments = len(route)
+
     if not reverse:
-        indices = range(len(route))
+        indices = range(num_segments)
     else:
-        indices = range(len(route)-1, -1, -1)
+        indices = range(num_segments-1, -1, -1)
 
     for i in indices:
         start, end, spd, stop, dwell_time = route[i]
@@ -128,19 +130,16 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
         segment_length = abs(end - start)
         sign = -1 if end < start else 1
         v_lim   = limited_speed(spd)
-        cruising = True
+
         # determine next speed
         if stop:
             v_next = 0.0
+        elif not reverse and i + 1 < num_segments:
+            v_next = limited_speed(route[i+1][2])
+        elif reverse and i - 1 >= 0:
+            v_next = limited_speed(route[i-1][2])
         else:
-            if not reverse:
-                if i+1 >= len(route):
-                    raise RuntimeError("Non-stop final segment has no next segment.")
-                v_next = limited_speed(route[i+1][2])
-            else:
-                if i-1 < 0:
-                    raise RuntimeError("Non-stop final segment has no next segment.")
-                v_next = limited_speed(route[i-1][2])
+            v_next = v_lim
 
         # check reachability
         if d_acc(v_prev, v_lim) + d_dec(v_lim, v_next) > segment_length:
@@ -149,6 +148,7 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
             cruising = False
         else:
             v_max = v_lim
+            cruising = True
 
         # 1) Acceleration block
         if v_prev < v_max:
