@@ -159,6 +159,7 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
                 # merged_pass_throughs.append(next_start)  # boundary position (optional)
                 j += reverse_sign
                 end_eff = next_end
+                dwell_time = next_dwell
                 continue
 
             # If next segment is a required stop, we can include that segment but must end there.
