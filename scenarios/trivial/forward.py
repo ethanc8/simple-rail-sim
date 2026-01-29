@@ -4,7 +4,7 @@ dwell_time = 30 # seconds
 
 timetable_padding = 1.07
 
-scenario_name = "Metra Electric - Main Line"
+scenario_name = "Trivial forward"
 
 # convert mph to km/h
 def mph(speed):
@@ -17,13 +17,13 @@ def mph(speed):
 
 route = [
     (  0.00*mi,    1.00*mi, 60*mi/h, True, dwell_time),
-                                # STATION B stop
+                                # MP 1.0 stop
     (  1.00*mi,    2.00*mi, 40*mi/h, True, dwell_time),
-                                # STATION C stop
+                                # MP 2.0 stop
 ]
 
 stops = {
-     0.00*mi: 'Station A',
-     1.00*mi: 'Station B',
-     2.00*mi: 'Station C',
+     0.00*mi: 'Station at MP 0.0',
+     1.00*mi: 'Station at MP 1.0',
+     2.00*mi: 'Station at MP 2.0',
 }

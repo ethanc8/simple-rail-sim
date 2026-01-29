@@ -106,29 +106,41 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
 
     def solve_peak(v0, v1, v2, length):
         """Find peak speed v_peak <= v1 if no cruise possible."""
-        lo, hi = v0, v1
+        lo, hi = max(v0, v2), v1
         for _ in range(30):
             mid = 0.5*(lo+hi)
             if d_acc(v0,mid)+d_dec(mid,v2) > length: hi = mid
             else: lo = mid
         return lo
 
-    if reverse:
-        route = reversed(route)
+    if not reverse:
+        indices = range(len(route))
+    else:
+        indices = range(len(route)-1, -1, -1)
 
-    for start, end, spd, stop, dwell_time in route:
+    for i in indices:
+        start, end, spd, stop, dwell_time = route[i]
+
         if reverse:
-            start_tmp = start
-            start = end
-            end = start_tmp
+            start, end = end, start
         
         segment_start_pos = pos_cum
         segment_length = abs(end - start)
         sign = -1 if end < start else 1
         v_lim   = limited_speed(spd)
         cruising = True
-        # determine next speed for decel
-        v_next = 0.0 if stop else limited_speed(route[route.index((start,end,spd,stop,dwell_time))+1][2])
+        # determine next speed
+        if stop:
+            v_next = 0.0
+        else:
+            if not reverse:
+                if i+1 >= len(route):
+                    raise RuntimeError("Non-stop final segment has no next segment.")
+                v_next = limited_speed(route[i+1][2])
+            else:
+                if i-1 < 0:
+                    raise RuntimeError("Non-stop final segment has no next segment.")
+                v_next = limited_speed(route[i-1][2])
 
         # check reachability
         if d_acc(v_prev, v_lim) + d_dec(v_lim, v_next) > segment_length:
@@ -160,7 +172,7 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
 
         # 2) Cruise block
         d3 = d_dec(v_max, v_next)
-        d2 = segment_length - (pos_cum - segment_start_pos) - d3
+        d2 = segment_length - abs(pos_cum - segment_start_pos) - d3
         if d2 > 0:
             t2 = d2 / v_max
             if cruising:
@@ -232,6 +244,9 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
             v_prev = 0.0
         else:
             v_prev = v_max
+    
+    if abs(pos_cum - end) > 1e-3:
+        raise RuntimeError(f"Segment end mismatch: expected {end}, got {pos_cum}")
 
     actions_df = pd.DataFrame(actions)
     print("\n=== Action Breakdown ===")
