@@ -104,12 +104,15 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
         'Departure (s)': depart_time,
     })
 
-    def solve_peak(v0, v1, v2, length):
-        """Find peak speed v_peak <= v1 if no cruise possible."""
-        lo, hi = max(v0, v2), v1
-        for _ in range(30):
+    def solve_peak(v_prev, v_max, v_next, length):
+        """Find peak speed v_peak <= v_max (speed limit) if no cruise possible."""
+        lo, hi = max(v_prev, v_next), v_max
+        if lo > hi:
+            return hi
+        
+        for _ in range(50):
             mid = 0.5*(lo+hi)
-            if d_acc(v0,mid)+d_dec(mid,v2) > length: hi = mid
+            if d_acc(v_prev,mid)+d_dec(mid,v_next) > length: hi = mid
             else: lo = mid
         return lo
 
@@ -132,6 +135,7 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
         v_lim   = limited_speed(spd)
 
         # determine next speed
+        is_branch = False
         if stop:
             v_next = 0.0
         elif not reverse and i + 1 < num_segments:
@@ -139,6 +143,7 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
         elif reverse and i - 1 >= 0:
             v_next = limited_speed(route[i-1][2])
         else:
+            is_branch = True
             v_next = v_lim
 
         # check reachability
@@ -173,6 +178,9 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
         # 2) Cruise block
         d3 = d_dec(v_max, v_next)
         d2 = segment_length - abs(pos_cum - segment_start_pos) - d3
+        # Catch floating-point error
+        if d2 < 0 and d2 > -1e-6:
+            d2 = 0.0
         if d2 > 0:
             t2 = d2 / v_max
             if cruising:
@@ -228,8 +236,9 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
                 'End Time (s)': (t_cum + dwell_time)
             })
 
+            station_name = stops.get(end, f"Unnamed station at {end:.1f} m (MP {end/mi:.1f})")
             timetable.append({
-                'Station': stops[end],
+                'Station': station_name,
                 'Position (m)'     : end,
                 'MP'     : end / mi,
                 'KMP'     : end / km,
@@ -242,11 +251,23 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
             t_cum += dwell_time
 
             v_prev = 0.0
+        elif is_branch:
+            station_name = stops.get(end, f"Unnamed branch point at {end:.1f} m (MP {end/mi:.1f})")
+            timetable.append({
+                'Station': station_name,
+                'Position (m)'     : end,
+                'MP'     : end / mi,
+                'KMP'     : end / km,
+                'Arrival': timestamp_to_str(t_cum),
+                'Arrival (s)': t_cum,
+                'Departure': timestamp_to_str(t_cum + dwell_time),
+                'Departure (s)': t_cum + dwell_time,
+            })
         else:
             v_prev = v_max
     
-    if abs(pos_cum - end) > 1e-3:
-        raise RuntimeError(f"Segment end mismatch: expected {end}, got {pos_cum}")
+        if abs(pos_cum - end) > 1e-3:
+            raise RuntimeError(f"Segment end mismatch at route[{i}]: expected {end}, got {pos_cum}")
 
     actions_df = pd.DataFrame(actions)
     print("\n=== Action Breakdown ===")
