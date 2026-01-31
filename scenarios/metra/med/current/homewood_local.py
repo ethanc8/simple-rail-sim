@@ -1,6 +1,6 @@
 from units import *
 
-scenario_name = "Metra Electric [current] - Blue Island Local"
+scenario_name = "Metra Electric [current] - Homewood Local"
 
 timetable_padding = 1.07
 dwell_time = 30
@@ -51,10 +51,22 @@ route = [
                                 # 107TH STREET stop
     ( 13.54*mi,   13.95*mi, 65*mi/h, True, dwell_time),
                                 # 111TH-PULLMAN stop
-    ( 13.95*mi,   14.49*mi, 65*mi/h, True, 180),
+    ( 13.95*mi,   14.49*mi, 65*mi/h, True, dwell_time),
                                 # 115TH-KENSINGTON stop
-    ( 14.49*mi,   15.93*mi, 65*mi/h, False, 0),
-                                # [to SSL]
+    ( 14.49*mi,   17.33*mi, 65*mi/h, True, dwell_time),
+                                # RIVERDALE stop
+    ( 17.33*mi,   18.18*mi, 65*mi/h, True, dwell_time),
+                                # IVANHOE stop
+    ( 18.18*mi,   18.98*mi, 65*mi/h, True, dwell_time),
+                                # 147TH STREET stop
+    ( 18.98*mi,   20.00*mi, 65*mi/h, True, dwell_time),
+                                # HARVEY stop
+    ( 20.00*mi,   22.27*mi, 65*mi/h, True, dwell_time),
+                                # HAZEL CREST stop
+    ( 22.27*mi,   22.82*mi, 65*mi/h, True, dwell_time),
+                                # CALUMET stop
+    ( 22.82*mi,   23.51*mi, 65*mi/h, True, dwell_time),
+                                # HOMEWOOD stop
 ]
 
 stops = {

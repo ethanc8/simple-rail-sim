@@ -25,7 +25,7 @@ route = [
                                 # 47TH STREET stop
     (  5.90*mi,    6.54*mi, 65*mi/h, True, dwell_time),
                                 # 53RD STREET stop
-    (  6.54*mi,    6.99*mi, 65*mi/h, True, dwell_time),
+    (  6.54*mi,    6.99*mi, 65*mi/h, True, long_dwell),
                                 # 57TH STREET stop
     (  6.99*mi,    7.43*mi, 65*mi/h, True, dwell_time),
                                 # 59TH STREET stop
@@ -61,7 +61,8 @@ stops = {
     13.54*mi: '107th Street',
     13.95*mi: '111th-Pullman',
     14.49*mi: '115th-Kensington',
-    15.93*mi: '[to SSL]',
+    15.00*mi: '[to SSL]',
+    15.93*mi: '[to Blue Island]',
     17.33*mi: 'Riverdale',
     18.18*mi: 'Ivanhoe',
     18.98*mi: '147th Street',

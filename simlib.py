@@ -68,6 +68,21 @@ def timestamp_to_str_nosec(timestamp):
 def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
     reverse_sign = 1 if not reverse else -1
 
+    def get_segment(i):
+        start, end, spd, stop, dwell_time = route[i]
+
+        if reverse:
+            start, end = end, start
+            if i - 1 >= 0:
+                next_start, next_end, next_spd, next_stop, next_dwell = route[i - 1]
+                stop, dwell_time = next_stop, next_dwell
+            else:
+                # At the last station, we stop but don't dwell
+                stop = True
+                dwell_time = 0
+
+        return start, end, spd, stop, dwell_time
+
     route = scenario.route
     stops = scenario.stops
 
@@ -84,9 +99,9 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
 
     # ---- 3) Build the station timetable ----
 
-    start_pos = route[0][0]
+    start_pos = get_segment(0)[0]
     if reverse:
-        start_pos = route[-1][1]
+        start_pos = get_segment(-1)[1]
 
     timetable = []
     actions = []
@@ -123,9 +138,7 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
     i = 0 if not reverse else num_segments - 1
 
     while i < num_segments and i >= 0:
-        start, end, spd, stop, dwell_time = route[i]
-
-        if reverse: start, end = end, start
+        start, end, spd, stop, dwell_time = get_segment(i)
 
         # Merge forward through pass-through boundaries with same speed
         j = i
@@ -134,8 +147,7 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
         # merged_pass_throughs = []
 
         while True:
-            j_start, j_end, j_spd, j_stop, j_dwell_time = route[j]
-            if reverse: j_start, j_end = j_end, j_start
+            j_start, j_end, j_spd, j_stop, j_dwell_time = get_segment(j)
             # If current segment ends in a stop, end here
             if j_stop is True:
                 end_eff = j_end
@@ -146,8 +158,7 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
                 end_eff = j_end
                 break
 
-            next_start, next_end, next_spd, next_stop, next_dwell = route[j+reverse_sign]
-            if reverse: next_start, next_end = next_end, next_start
+            next_start, next_end, next_spd, next_stop, next_dwell = get_segment(j+reverse_sign)
             # If speed changes at the boundary, end here
             if next_spd != spd:
                 end_eff = j_end
@@ -183,9 +194,9 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
         if stop:
             v_next = 0.0
         elif not reverse and j + 1 < num_segments:
-            v_next = limited_speed(route[j+1][2])
+            v_next = limited_speed(get_segment(j+1)[2])
         elif reverse and j - 1 >= 0:
-            v_next = limited_speed(route[j-1][2])
+            v_next = limited_speed(get_segment(j-1)[2])
         else:
             is_branch = True
             v_next = v_lim

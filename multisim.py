@@ -18,6 +18,7 @@ for trip in multitrip.trips:
     reverse = False
     if len(trip) > 5:
         reverse = trip[5]
+        print("REVERSE TRIP")
     
     scenario = importlib.import_module(f'scenarios.{scenario_id}')
     print(f"Scenario: {scenario.scenario_name}")
