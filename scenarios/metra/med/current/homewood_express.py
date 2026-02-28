@@ -59,7 +59,7 @@ route = [
                                 # IVANHOE stop
     ( 18.18*mi,   18.98*mi, 65*mi/h, False, dwell_time),
                                 # 147TH STREET stop
-    ( 18.98*mi,   20.00*mi, 65*mi/h, False, dwell_time),
+    ( 18.98*mi,   20.00*mi, 65*mi/h, True, dwell_time),
                                 # HARVEY stop
     ( 20.00*mi,   22.27*mi, 65*mi/h, False, dwell_time),
                                 # HAZEL CREST stop
