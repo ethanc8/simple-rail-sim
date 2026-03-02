@@ -122,11 +122,16 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
     })
 
     def solve_peak(v_prev, v_max, v_next, length):
-        """Find peak speed v_peak <= v_max (speed limit) if no cruise possible."""
         lo, hi = max(v_prev, v_next), v_max
-        if lo > hi:
-            return hi
-        
+        if lo >= hi:
+            if d_acc(v_prev, lo) > length:
+                a, b = v_prev, lo
+                for _ in range(50):
+                    mid = 0.5*(a+b)
+                    if d_acc(v_prev, mid) > length: b = mid
+                    else: a = mid
+                return a
+            return lo
         for _ in range(50):
             mid = 0.5*(lo+hi)
             if d_acc(v_prev,mid)+d_dec(mid,v_next) > length: hi = mid
@@ -175,6 +180,9 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
 
             # If next segment is a required stop, we can include that segment but must end there.
             # (We merge through the segment itself; we just stop at its end.)
+            if next_spd != spd:
+                end_eff = j_end
+                break
             j += reverse_sign
             end_eff = next_end
             stop = True
@@ -194,9 +202,9 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
         if stop:
             v_next = 0.0
         elif not reverse and j + 1 < num_segments:
-            v_next = limited_speed(get_segment(j+1)[2])
+            v_next = min(limited_speed(get_segment(j+1)[2]), v_lim)  # ← clamp to current v_lim
         elif reverse and j - 1 >= 0:
-            v_next = limited_speed(get_segment(j-1)[2])
+            v_next = min(limited_speed(get_segment(j-1)[2]), v_lim)  # ← clamp to current v_lim
         else:
             is_branch = True
             v_next = v_lim
@@ -322,6 +330,9 @@ def simulate(scenario, vehicle, depart_time=0.0, reverse=False):
             v_prev = v_max
     
         if abs(pos_cum - end) > 1e-3:
+            actions_df = pd.DataFrame(actions)
+            print("\n=== Action Breakdown ===")
+            print(actions_df[['Phase','Start Pos (m)','End Pos (m)','Start Pos (mi)','End Pos (mi)','Start Speed (km/h)', 'End Speed (km/h)', 'Start Time','End Time']].to_string(index=False))
             raise RuntimeError(f"Segment end mismatch at route[{i}]: expected {end}, got {pos_cum}")
         
         i = j + reverse_sign
