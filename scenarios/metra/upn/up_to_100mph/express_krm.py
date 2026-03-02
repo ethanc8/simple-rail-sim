@@ -23,64 +23,64 @@ route = [
                                 # CLYBOURN stop
     (  2.8*mi,    3.5*mi, 100*mi/h, False, dwell_time),
     (  3.5*mi,    3.9*mi, 100*mi/h, False, dwell_time),
-    (  3.9*mi,    6.5*mi, 100*mi/h, True, dwell_time),
+    (  3.9*mi,    6.5*mi, 100*mi/h, False, dwell_time),
                                 # RAVENSWOOD stop
-    (  6.5*mi,    8.1*mi, 100*mi/h, True, dwell_time),
+    (  6.5*mi,    8.1*mi, 100*mi/h, False, dwell_time),
                                 # PETERSON/RIDGE stop
-    (  8.1*mi,    9.4*mi, 100*mi/h, True, dwell_time),
+    (  8.1*mi,    9.4*mi, 100*mi/h, False, dwell_time),
                                 # ROGERS PARK stop
-    (  9.4*mi,   11.0*mi, 100*mi/h, True, dwell_time),
+    (  9.4*mi,   11.0*mi, 100*mi/h, False, dwell_time),
                                 # MAIN STREET stop
     ( 11.0*mi,   12.0*mi, 100*mi/h, True, dwell_time),
                                 # EVANSTON stop
-    ( 12.0*mi,   13.3*mi, 100*mi/h, True, dwell_time),
+    ( 12.0*mi,   13.3*mi, 100*mi/h, False, dwell_time),
                                 # CENTRAL STREET stop
-    ( 13.3*mi,   14.4*mi, 100*mi/h, True, dwell_time),
+    ( 13.3*mi,   14.4*mi, 100*mi/h, False, dwell_time),
                                 # WILMETTE stop
-    ( 14.4*mi,   15.2*mi, 100*mi/h, True, dwell_time),
+    ( 14.4*mi,   15.2*mi, 100*mi/h, False, dwell_time),
                                 # KENILWORTH stop
-    ( 15.2*mi,   15.8*mi, 100*mi/h, True, dwell_time),
+    ( 15.2*mi,   15.8*mi, 100*mi/h, False, dwell_time),
                                 # INDIAN HILL stop
-    ( 15.8*mi,   16.6*mi, 100*mi/h, True, dwell_time),
+    ( 15.8*mi,   16.6*mi, 100*mi/h, False, dwell_time),
                                 # WINNETKA stop
-    ( 16.6*mi,   17.7*mi, 100*mi/h, True, dwell_time),
+    ( 16.6*mi,   17.7*mi, 100*mi/h, False, dwell_time),
                                 # HUBBARD WOODS stop
     ( 17.7*mi,   19.2*mi, 100*mi/h, True, dwell_time),
                                 # GLENCOE stop
-    ( 19.2*mi,   20.5*mi, 100*mi/h, True, dwell_time),
+    ( 19.2*mi,   20.5*mi, 100*mi/h, False, dwell_time),
                                 # BRAESIDE stop
-    ( 20.5*mi,   20.9*mi, 100*mi/h, True, dwell_time),
+    ( 20.5*mi,   20.9*mi, 100*mi/h, False, dwell_time),
                                 # RAVINIA PARK stop
-    ( 20.9*mi,   21.5*mi, 100*mi/h, True, dwell_time),
+    ( 20.9*mi,   21.5*mi, 100*mi/h, False, dwell_time),
                                 # RAVINIA stop
     ( 21.5*mi,   23.0*mi, 100*mi/h, True, dwell_time),
                                 # HIGHLAND PARK stop
-    ( 23.0*mi,   24.5*mi, 100*mi/h, True, dwell_time),
+    ( 23.0*mi,   24.5*mi, 100*mi/h, False, dwell_time),
                                 # HIGHWOOD stop
-    ( 24.5*mi,   25.7*mi, 100*mi/h, True, dwell_time),
+    ( 24.5*mi,   25.7*mi, 100*mi/h, False, dwell_time),
                                 # FT. SHERIDAN stop
-    ( 25.7*mi,   28.3*mi, 100*mi/h, True, dwell_time),
+    ( 25.7*mi,   28.3*mi, 100*mi/h, False, dwell_time),
                                 # LAKE FOREST stop
     ( 28.3*mi,   30.2*mi, 100*mi/h, True, dwell_time),
                                 # LAKE BLUFF stop
-    ( 30.2*mi,   32.2*mi, 100*mi/h, True, dwell_time),
+    ( 30.2*mi,   32.2*mi, 100*mi/h, False, dwell_time),
                                 # GREAT LAKES stop
-    ( 32.2*mi,   33.7*mi, 100*mi/h, True, dwell_time),
+    ( 32.2*mi,   33.7*mi, 100*mi/h, False, dwell_time),
                                 # NORTH CHICAGO stop
     ( 33.7*mi,   35.9*mi, 100*mi/h, True, dwell_time),
                                 # WAUKEGAN stop
     ( 35.9*mi,   36.1*mi,  93*mi/h, False, dwell_time),
                                 # Waukegan 10th St curve
-    ( 36.1*mi,   42.1*mi, 100*mi/h, True, dwell_time),
+    ( 36.1*mi,   42.1*mi, 100*mi/h, False, dwell_time),
                                 # ZION stop
-    ( 42.1*mi,   44.5*mi, 100*mi/h, True, dwell_time),
+    ( 42.1*mi,   44.5*mi, 100*mi/h, False, dwell_time),
                                 # WINTHROP HARBOR stop
     ( 44.5*mi,   51.6*mi, 100*mi/h, True, dwell_time),
                                 # KENOSHA stop
     ( 51.6*mi,   53.5*mi, 100*mi/h, False, dwell_time),
     ( 53.5*mi,   54.2*mi,  80*mi/h, False, dwell_time),
                                 # Kenosha 19th St curve
-    ( 54.2*mi,   55.3*mi, 100*mi/h, True, dwell_time),
+    ( 54.2*mi,   55.3*mi, 100*mi/h, False, dwell_time),
                                 # SOMERS stop
     ( 55.3*mi,   59.6*mi, 100*mi/h, False, dwell_time),
     ( 59.6*mi,   59.7*mi,  98*mi/h, False, dwell_time),
@@ -92,15 +92,15 @@ route = [
                                 # RACINE stop
     ( 61.7*mi,   62.0*mi,  61*mi/h, False, dwell_time),
                                 # Racine State St curve
-    ( 62.0*mi,   65.9*mi, 100*mi/h, True, dwell_time),
+    ( 62.0*mi,   65.9*mi, 100*mi/h, False, dwell_time),
                                 # CALEDONIA stop
-    ( 65.9*mi,   72.0*mi, 100*mi/h, True, dwell_time),
+    ( 65.9*mi,   72.0*mi, 100*mi/h, False, dwell_time),
                                 # OAK CREEK stop
-    ( 72.0*mi,   74.7*mi, 100*mi/h, True, dwell_time),
+    ( 72.0*mi,   74.7*mi, 100*mi/h, False, dwell_time),
                                 # SOUTH MILWAUKEE stop
     ( 74.7*mi,   77.7*mi, 100*mi/h, False, dwell_time),
     # MP 77.7~78.2 - Library Dr curve
-    ( 77.7*mi,   78.2*mi,  78*mi/h, True, dwell_time),
+    ( 77.7*mi,   78.2*mi,  78*mi/h, False, dwell_time),
                                 # CUDAHY stop
     ( 78.2*mi,   79.6*mi, 100*mi/h, False, dwell_time),
     ( 79.6*mi,   79.9*mi,  50*mi/h, False, dwell_time),
@@ -110,7 +110,7 @@ route = [
     #                      beginning of National Ave Industrial Lead
     #                      This industrial lead is kinda curvy due to the 
     #                      expressway taking up part of the ROW
-    ( 79.9*mi,   81.5*mi,  50*mi/h, True, dwell_time),
+    ( 79.9*mi,   81.5*mi,  50*mi/h, False, dwell_time),
                                 # LINCOLN AVE stop
     ( 81.5*mi,   83.0*mi,  50*mi/h, False, dwell_time),
     # MP 83.0 - switch from National Ave Industrial Lead to MILW (CPKC, approach to Milwaukee Intermodal)
