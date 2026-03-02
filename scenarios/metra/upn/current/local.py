@@ -1,23 +1,28 @@
-scenario_name = "UP-N - current locals"
+from units import *
 
-# convert mph to km/h
-def mph(speed):
-    return speed * 1.609344
+scenario_name = "UP-N locals"
+
+timetable_padding = 1.07
+dwell_time = 30
+long_dwell = 60
 
 # Each tuple: (start, end, speed limit (m/s), ends at stop, dwell time)
 
-# Mileposts are from https://chicagorailfan.com/mmupn.html
-# Speed limits are from OpenRailwayMap
+# Speed limits from OpenRailwayMap and historical employee timetables
+# Mileposts from https://www.chicagorailfan.com/mmupn.html
 
 route = [
+    # Ogilvie to Northwest Jct is part of Geneva Sub
                                 # OGILVIE stop
-    (  0.0*mi,    0.2*mi, 10*mi/h, False, dwell_time),
-    (  0.2*mi,    0.5*mi, 15*mi/h, False, dwell_time),
+    (  0.0*mi,    0.3*mi, 10*mi/h, False, dwell_time),
+    (  0.3*mi,    0.5*mi, 15*mi/h, False, dwell_time),
+    # Northwest Jct at MP 0.5
+    # Northwest Jct to Clybourn is part of Harvard Sub
     (  0.5*mi,    2.8*mi, 35*mi/h, True, dwell_time),
                                 # CLYBOURN stop
     (  2.8*mi,    3.5*mi, 35*mi/h, False, dwell_time),
-    (  3.5*mi,    4.0*mi, 50*mi/h, False, dwell_time),
-    (  4.0*mi,    6.5*mi, 70*mi/h, True, dwell_time),
+    (  3.5*mi,    3.9*mi, 50*mi/h, False, dwell_time),
+    (  3.9*mi,    6.5*mi, 70*mi/h, True, dwell_time),
                                 # RAVENSWOOD stop
     (  6.5*mi,    8.1*mi, 70*mi/h, True, dwell_time),
                                 # PETERSON/RIDGE stop
@@ -25,6 +30,8 @@ route = [
                                 # ROGERS PARK stop
     (  9.4*mi,   11.0*mi, 70*mi/h, True, dwell_time),
                                 # MAIN STREET stop
+    # From 11.9 to 12.1 there is a limit of 50 mph
+    # but we ignore it since all trains stop at Evanston
     ( 11.0*mi,   12.0*mi, 70*mi/h, True, dwell_time),
                                 # EVANSTON stop
     ( 12.0*mi,   13.3*mi, 70*mi/h, True, dwell_time),
@@ -72,11 +79,11 @@ route = [
 ]
 
 stops = {
-    0.0:  'Chicago - Ogilvie',
-    2.8:  'Clybourn',
-    6.5:  'Ravenswood',
-    8.1:  'Peterson/Ridge',
-    9.4:  'Rogers Park',
+    0.0*mi:  'Chicago - Ogilvie',
+    2.8*mi:  'Clybourn',
+    6.5*mi:  'Ravenswood',
+    8.1*mi:  'Peterson/Ridge',
+    9.4*mi:  'Rogers Park',
     11.0*mi: 'Main Street',
     12.0*mi: 'Evanston',
     13.3*mi: 'Central Street',
