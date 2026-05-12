@@ -11,29 +11,35 @@ long_dwell = 60
 # Mileposts are from https://chicagorailfan.com/mmelec.html
 
 route = [
-    (  0.00*mi,    0.80*mi, 65*mi/h, True, dwell_time),
+    (  0.00*mi,    0.80*mi, 10*mi/h, True, dwell_time),
                                 # VAN BUREN STREET stop
-    (  0.80*mi,    1.43*mi, 65*mi/h, True, dwell_time),
+    (  0.80*mi,    1.31*mi, 15*mi/h, False, dwell_time),
+                                # CP 11th Place
+    (  1.31*mi,    1.43*mi, 40*mi/h, True, dwell_time),
                                 # MUSEUM CAMPUS/11TH STREET stop
-    (  1.43*mi,    2.22*mi, 65*mi/h, False, dwell_time),
+    (  1.43*mi,    2.22*mi, 40*mi/h, False, dwell_time),
                                 # 18TH STREET stop
-    (  2.22*mi,    2.68*mi, 65*mi/h, True, dwell_time),
+    (  2.22*mi,    2.31*mi, 40*mi/h, False, dwell_time),
+    (  2.31*mi,    2.54*mi, 25*mi/h, False, dwell_time),
+    (  2.54*mi,    2.68*mi, 65*mi/h, False, dwell_time),
                                 # MCCORMICK PLACE/23RD STREET stop
     (  2.68*mi,    3.20*mi, 65*mi/h, False, dwell_time),
                                 # 27TH STREET stop
     (  3.20*mi,    5.90*mi, 65*mi/h, False, dwell_time),
                                 # 47TH STREET stop
-    (  5.90*mi,    6.54*mi, 65*mi/h, False, dwell_time),
+    (  5.90*mi,    6.54*mi, 65*mi/h, True, dwell_time),
                                 # 53RD STREET stop
     (  6.54*mi,    6.99*mi, 65*mi/h, True, long_dwell),
                                 # 57TH STREET stop
-    (  6.99*mi,    7.43*mi, 65*mi/h, False, dwell_time),
+    (  6.99*mi,    7.43*mi, 65*mi/h, True, dwell_time),
                                 # 59TH STREET stop
     (  7.43*mi,    7.92*mi, 65*mi/h, False, dwell_time),
                                 # 63RD STREET stop
-    (  7.92*mi,    8.33*mi, 65*mi/h, False, dwell_time),
+    (  7.92*mi,    8.05*mi, 65*mi/h, False, dwell_time),
+    (  8.05*mi,    8.33*mi, 45*mi/h, False, dwell_time),
                                 # 67TH STREET stop
-    (  8.33*mi,    9.32*mi, 65*mi/h, False, dwell_time),
+    (  8.33*mi,    8.74*mi, 45*mi/h, False, dwell_time),
+    (  8.74*mi,    9.32*mi, 65*mi/h, False, dwell_time),
                                 # 75TH-GRAND CROSSING stop
     (  9.32*mi,    9.99*mi, 65*mi/h, False, dwell_time),
                                 # 79TH-CHATHAM stop
@@ -51,9 +57,13 @@ route = [
                                 # 107TH STREET stop
     ( 13.54*mi,   13.95*mi, 65*mi/h, False, dwell_time),
                                 # 111TH-PULLMAN stop
-    ( 13.95*mi,   14.49*mi, 65*mi/h, True, long_dwell),
+    ( 13.95*mi,   14.21*mi, 65*mi/h, False, dwell_time),
+    ( 14.21*mi,   14.49*mi, 25*mi/h, True, 180),
                                 # 115TH-KENSINGTON stop
-    ( 14.49*mi,   17.33*mi, 65*mi/h, True, dwell_time),
+    ( 14.49*mi,   14.78*mi, 35*mi/h, False, dwell_time),
+    ( 14.78*mi,   16.92*mi, 50*mi/h, False, dwell_time),
+    ( 16.92*mi,   16.99*mi, 50*mi/h, False, dwell_time),
+    ( 16.99*mi,   17.33*mi, 65*mi/h, True, dwell_time),
                                 # RIVERDALE stop
     ( 17.33*mi,   18.18*mi, 65*mi/h, True, dwell_time),
                                 # IVANHOE stop
@@ -65,7 +75,10 @@ route = [
                                 # HAZEL CREST stop
     ( 22.27*mi,   22.82*mi, 65*mi/h, True, dwell_time),
                                 # CALUMET stop
-    ( 22.82*mi,   23.51*mi, 65*mi/h, True, dwell_time),
+    # Speed limit is 65 mph but the train cannot slow from 65 to 55 fast enough
+    # for the simulation to work
+    ( 22.82*mi,   23.43*mi, 55*mi/h, False, dwell_time),
+    ( 23.43*mi,   23.51*mi, 55*mi/h, True, dwell_time),
                                 # HOMEWOOD stop
     ( 23.51*mi,   24.93*mi, 65*mi/h, True, dwell_time),
                                 # FLOSSMOOR stop

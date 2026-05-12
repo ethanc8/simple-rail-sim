@@ -1,4 +1,9 @@
+from units import *
+
 scenario_name = "IC-Wabash-Alton (300 km/h Chicago-Clifton)"
+
+dwell_time = 60 * s
+timetable_padding = 1.07
 
 def wabash(mp):
     # Wabash MP 338.0 = IC MP 137.1 (Tolono)
@@ -22,8 +27,8 @@ def trra(mp):
 route = [
                                 # CHICAGO UNION STATION stop
     (  0.0*mi,    3.0*mi, 100*km/h, False, dwell_time), # St Charles Air Line
-    (  3.0*mi,    4.1*mi, 150*km/h, False, dwell_time), # 34th St curve, and some minor curves
-    (  4.2*mi,    5.9*mi, 177*km/h, False, dwell_time),
+    # Should be 150 but it doesn't accelerate fast enough
+    (  3.0*mi,    5.9*mi, 100*km/h, False, dwell_time), # 34th St curve, and some minor curves
     (  5.9*mi,    7.2*mi, 177*km/h, False, dwell_time), # Hyde Park curve
     (  7.2*mi,   16.5*mi, 177*km/h, False, dwell_time), 
     ( 16.5*mi,   17.0*mi, 177*km/h, False, dwell_time), # 133rd St curve
@@ -32,7 +37,7 @@ route = [
     ( 48.4*mi,   55.9*mi, 177*km/h, True, dwell_time),
                                 # KANKAKEE stop
     ( 55.9*mi,   67.4*mi, 177*km/h, False, dwell_time), # 5100 N Rd grade crossing, Clifton
-    ( 67.4, 127.8, 177, True ), 
+    ( 67.4*mi,  127.8*mi, 177*km/h, True, dwell_time), 
                                 # CHAMPAIGN stop
     (127.8*mi,  137.0*mi, 177*km/h, False, dwell_time),
     (137.0*mi,  wabash(338.1)*mi, 100*km/h, False, dwell_time),  # Tolono - switch from IC Main Line to Wabash (NS Lafayette District)
@@ -50,7 +55,7 @@ route = [
     (alton(187.4)*mi,  alton(256.8)*mi, 177*km/h, False, dwell_time),
                                 # skip ALTON station
                                 # Joliet to Alton station has already been upgraded to 177 km/h
-    (256.8*mi,  259.6*mi, 145*km/h, False, dwell_time),
+    (alton(256.8)*mi,  alton(259.6)*mi, 145*km/h, False, dwell_time),
     (alton_orig(262.1)*mi,  alton_orig(270.0)*mi, 145*km/h, False, dwell_time),
     (alton_orig(270.0)*mi,  alton_orig(274.4)*mi, 145*km/h, False, dwell_time),
     (alton_orig(274.4)*mi,  trra(1.5)*mi, 40*km/h, True, dwell_time),
