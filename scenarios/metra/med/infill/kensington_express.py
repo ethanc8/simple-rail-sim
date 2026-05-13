@@ -1,6 +1,6 @@
 from units import *
 
-scenario_name = "Metra Electric [current] - Main Express"
+scenario_name = "Metra Electric [infill] - Main Express"
 
 timetable_padding = 1.07
 dwell_time = 30
@@ -9,75 +9,77 @@ long_dwell = 60
 # Each tuple: (start, end, speed limit (m/s), ends at stop, dwell time)
 
 # Mileposts are from https://chicagorailfan.com/mmelec.html
-# Speed limits from https://raw.githubusercontent.com/ethanc8/random-public-records/trunk/Chicagoland/employee-timetable/metra/metra-system-special-instructions-no-1-2020.pdf#page=36
+
 route = [
-    (  0.00*mi,    0.80*mi, 65*mi/h, True, dwell_time),
+    (  0.00*mi,    0.80*mi, 90*mi/h, True, dwell_time),
                                 # VAN BUREN STREET stop
-    (  0.80*mi,    1.43*mi, 65*mi/h, True, dwell_time),
+    (  0.80*mi,    1.43*mi, 90*mi/h, True, dwell_time),
                                 # MUSEUM CAMPUS/11TH STREET stop
-    (  1.43*mi,    2.22*mi, 65*mi/h, False, dwell_time),
+    (  1.43*mi,    2.22*mi, 90*mi/h, False, dwell_time),
                                 # 18TH STREET stop
-    (  2.22*mi,    2.68*mi, 65*mi/h, True, dwell_time),
+    (  2.22*mi,    2.68*mi, 90*mi/h, True, dwell_time),
                                 # MCCORMICK PLACE/23RD STREET stop
-    (  2.68*mi,    3.20*mi, 65*mi/h, False, dwell_time),
-                                # 27TH STREET stop
-    (  3.20*mi,    5.90*mi, 65*mi/h, False, dwell_time),
+    (  2.68*mi,    3.74*mi, 90*mi/h, False, dwell_time),
+                                # 31ST STREET stop
+    (  3.74*mi,    4.82*mi, 90*mi/h, False, dwell_time),
+                                # 39TH STREET stop
+    (  4.82*mi,    5.90*mi, 90*mi/h, False, dwell_time),
                                 # 47TH STREET stop
-    (  5.90*mi,    6.54*mi, 65*mi/h, False, dwell_time),
+    (  5.90*mi,    6.54*mi, 90*mi/h, True, dwell_time),
                                 # 53RD STREET stop
-    (  6.54*mi,    6.99*mi, 65*mi/h, True, long_dwell),
+    (  6.54*mi,    6.99*mi, 90*mi/h, True, dwell_time),
                                 # 57TH STREET stop
-    (  6.99*mi,    7.43*mi, 65*mi/h, False, dwell_time),
+    (  6.99*mi,    7.43*mi, 90*mi/h, True, dwell_time),
                                 # 59TH STREET stop
-    (  7.43*mi,    7.92*mi, 65*mi/h, False, dwell_time),
+    (  7.43*mi,    7.92*mi, 90*mi/h, False, dwell_time),
                                 # 63RD STREET stop
-    (  7.92*mi,    8.33*mi, 65*mi/h, False, dwell_time),
+    (  7.92*mi,    8.33*mi, 90*mi/h, False, dwell_time),
                                 # 67TH STREET stop
-    (  8.33*mi,    9.32*mi, 65*mi/h, False, dwell_time),
+    (  8.33*mi,    9.32*mi, 90*mi/h, False, dwell_time),
                                 # 75TH-GRAND CROSSING stop
-    (  9.32*mi,    9.99*mi, 65*mi/h, False, dwell_time),
+    (  9.32*mi,    9.99*mi, 90*mi/h, False, dwell_time),
                                 # 79TH-CHATHAM stop
-    (  9.99*mi,   10.38*mi, 65*mi/h, False, dwell_time),
+    (  9.99*mi,   10.38*mi, 90*mi/h, False, dwell_time),
                                 # 83RD-AVALON PARK stop
-    ( 10.38*mi,   10.86*mi, 65*mi/h, False, dwell_time),
+    ( 10.38*mi,   10.86*mi, 90*mi/h, False, dwell_time),
                                 # 87TH-WOODRUFF stop
-    ( 10.86*mi,   11.37*mi, 65*mi/h, False, dwell_time),
+    ( 10.86*mi,   11.37*mi, 90*mi/h, False, dwell_time),
                                 # 91ST-CHESTERFIELD stop
-    ( 11.37*mi,   12.04*mi, 65*mi/h, False, dwell_time),
+    ( 11.37*mi,   12.04*mi, 90*mi/h, False, dwell_time),
                                 # 95TH-CHICAGO STATE UNIVERSITY stop
-    ( 12.04*mi,   13.06*mi, 65*mi/h, False, dwell_time),
+    ( 12.04*mi,   13.06*mi, 90*mi/h, False, dwell_time),
                                 # 103RD STREET stop
-    ( 13.06*mi,   13.54*mi, 65*mi/h, False, dwell_time),
+    ( 13.06*mi,   13.54*mi, 90*mi/h, False, dwell_time),
                                 # 107TH STREET stop
-    ( 13.54*mi,   13.95*mi, 65*mi/h, False, dwell_time),
+    ( 13.54*mi,   13.95*mi, 90*mi/h, False, dwell_time),
                                 # 111TH-PULLMAN stop
-    ( 13.95*mi,   14.49*mi, 65*mi/h, True, long_dwell),
+    ( 13.95*mi,   14.49*mi, 90*mi/h, True, long_dwell),
                                 # 115TH-KENSINGTON stop
-    ( 14.49*mi,   17.33*mi, 65*mi/h, False, long_dwell),
+    ( 14.49*mi,   17.33*mi, 90*mi/h, True, long_dwell),
                                 # RIVERDALE stop
-    ( 17.33*mi,   18.18*mi, 65*mi/h, False, dwell_time),
+    ( 17.33*mi,   18.18*mi, 90*mi/h, True, dwell_time),
                                 # IVANHOE stop
-    ( 18.18*mi,   18.98*mi, 65*mi/h, False, dwell_time),
+    ( 18.18*mi,   18.98*mi, 90*mi/h, True, dwell_time),
                                 # 147TH STREET stop
-    ( 18.98*mi,   20.00*mi, 65*mi/h, True, dwell_time),
+    ( 18.98*mi,   20.00*mi, 90*mi/h, True, dwell_time),
                                 # HARVEY stop
-    ( 20.00*mi,   22.27*mi, 65*mi/h, False, dwell_time),
+    ( 20.00*mi,   22.27*mi, 90*mi/h, True, dwell_time),
                                 # HAZEL CREST stop
-    ( 22.27*mi,   22.82*mi, 65*mi/h, False, dwell_time),
+    ( 22.27*mi,   22.82*mi, 90*mi/h, True, dwell_time),
                                 # CALUMET stop
-    ( 22.82*mi,   23.51*mi, 65*mi/h, True, dwell_time),
+    ( 22.82*mi,   23.51*mi, 90*mi/h, True, dwell_time),
                                 # HOMEWOOD stop
-    ( 23.51*mi,   24.93*mi, 65*mi/h, True, dwell_time),
+    ( 23.51*mi,   24.93*mi, 90*mi/h, True, dwell_time),
                                 # FLOSSMOOR stop
-    ( 24.93*mi,   26.56*mi, 65*mi/h, True, dwell_time),
+    ( 24.93*mi,   26.56*mi, 90*mi/h, True, dwell_time),
                                 # OLYMPIA FIELDS stop
-    ( 26.56*mi,   27.62*mi, 65*mi/h, True, dwell_time),
+    ( 26.56*mi,   27.62*mi, 90*mi/h, True, dwell_time),
                                 # 211TH STREET stop
-    ( 27.62*mi,   28.24*mi, 65*mi/h, True, dwell_time),
+    ( 27.62*mi,   28.24*mi, 90*mi/h, True, dwell_time),
                                 # MATTESON stop
-    ( 28.24*mi,   29.33*mi, 65*mi/h, True, dwell_time),
+    ( 28.24*mi,   29.33*mi, 90*mi/h, True, dwell_time),
                                 # RICHTON PARK stop
-    ( 29.33*mi,   31.50*mi, 65*mi/h, True, dwell_time),
+    ( 29.33*mi,   31.50*mi, 90*mi/h, True, dwell_time),
                                 # UNIVERSITY PARK stop
 ]
 
@@ -87,9 +89,9 @@ stops = {
      1.43*mi: 'Museum Campus/11th Street',
      2.22*mi: '18th Street',
      2.68*mi: 'McCormick Place/23rd Street',
-     3.20*mi: '27th Street',
-    #  3.74*mi: '31st Street',
-    #  4.82*mi: '39th Street',
+    #  3.20*mi: '27th Street',
+     3.74*mi: '31st Street',
+     4.82*mi: '39th Street',
      5.90*mi: '47th Street',
      6.54*mi: '53rd Street',
      6.99*mi: '57th Street',
@@ -107,8 +109,7 @@ stops = {
     13.54*mi: '107th Street',
     13.95*mi: '111th-Pullman',
     14.49*mi: '115th-Kensington',
-    15.00*mi: '[to SSL]',
-    15.93*mi: '[to Blue Island]',
+    15.93*mi: '[to SSL]',
     17.33*mi: 'Riverdale',
     18.18*mi: 'Ivanhoe',
     18.98*mi: '147th Street',
